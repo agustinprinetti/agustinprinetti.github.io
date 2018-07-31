@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>GCBA MAP</title>
+	<style>
+	
+	@import url('https://fonts.googleapis.com/css?family=Raleway');
+      #floating-panel {
+        position: absolute;
+        top: 3px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 0px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Raleway','sans-serif';
+        line-height: 15px;
+        padding-left: 10px;
+		font-size:10px;
+      }
+      #floating-panel {
+        background-color: #fff;
+        border: 0px solid #999;
+		border-radius: 3px;
+	box-shadow: 0 2px 2px 2px rgba(0,0,0,0.1), 0 2px 2px 0 rgba(0,0,0,0.19);
+        left: 10px;
+        padding: 5px;
+        position: absolute;
+        top: 60px;
+        z-index: 5;
+      }
+	  #underfloating-panel {
+	  padding: 15px;
+        text-align: center;
+        font-family: 'Raleway','sans-serif';
+		font-weight:bold;
+				font-size:15px;
+      }
+	  .button {
+    background-color: #23826a; /* Green */
+    border: none;
+    color: white;
+	font-weight: bold;
+	border-radius: 2px;
+	box-shadow: 0 1px 1px 1px rgba(0,0,0,0.1), 0 1px 1px 0 rgba(0,0,0,0.19);
+    padding: 12px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 12px;
+	font-family: "Raleway";
+	-webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+.button:hover {
+    background-color: #ebebeb; /* Green */
+	color: grey;
+}
+
+		html, body, #map-canvas {
+  height: 100%;
+  margin: 0px;
+  padding: 0px
+}
+
+#infowindow{
+  padding: 0px;
+  font-family: 'Raleway', sans-serif;
+}
+	</style>
+</head>
+<body>
+<div id="floating-panel">
+	<div id="underfloating-panel">GCBA MAP by Agustin Prinetti</br></div>
+	<b>Visualizando:</b> Obras del GCBA finalizadas en 2017</br>Click en cada una para ver detalles
+    </div>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+<div id="map-canvas"></div>
+	<script>
+	var locations = [
+["<b>1167 - Entorno Retiro: Retiro Etapa III: Suipacha II + Arroyo + Juncal</b><br/>Monto: $24490004 | Licitada a Da Fre Obras Civiles S.A (CUIT 30711388768) | Finalizada el 07/01/2017", -34.6239225542, -58.3655131199],
+["<b>1168 - Entorno Retiro: Retiro I: Basavilbaso + Juncal</b><br/>Monto: $22259416 | Licitada a Cunumi S.A. (CUIT 30615748036) | Finalizada el 07/01/2017", -34.6239225542, -58.3655131199],
+["<b>1171 - Plan Tribunales: Tribunales I: Renovacion Integral De Plaza Lavalle</b><br/>Monto: $48969994 | Licitada a Algieri S.A (CUIT 30699339810) | Finalizada el 08/01/2017", -34.5865878232, -58.3858530117],
+["<b>695 - Barrio Los Piletones: Nexo Conexion De Red De Agua Potable ( Lacarra) Barrio Los Piletones</b><br/>Monto: $1832840 | Licitada a Kopar S.A (CUIT 30707504990) | Finalizada el 16/03/2017", -34.603869, -58.431242],
+["<b>696 - Barrio Los Piletones: Finalizacion Edificios 10 Y 11 (Piletones)</b><br/>Monto: $22035450 | Licitada a Wayro Ingenieria S.A. (CUIT 30661734708) | Finalizada el 30/06/2017", -34.684704, -58.455339],
+["<b>697 - Barrio Los Piletones: Finalizacion Edificios 12 Y 13 (Piletones)</b><br/>Monto: $24498933 | Licitada a Bosquimano S.A (CUIT 30711470022) | Finalizada el 30/06/2017", -34.580121, -58.430596],
+["<b>1060 - Barrio Los Piletones: Cercado Y Mejoramiento - Plaza Mz 191 - Ch Piletones</b><br/>Monto: $950170 | Licitada a Cooperativa (CUIT ?) | Finalizada el 28/01/2017", -34.6984349949, -58.4706449041],
+["<b>1093 - Asev: area De Servicios En Parque Patricios</b><br/>Monto: $5224224 | Licitada a Ingenor S.A. (CUIT 30631453461) | Finalizada el 08/01/2017", -34.6474854056, -58.513715914],
+["<b>1095 - Plan Tribunales: Rehabilitacion De Av. Cordoba (E/ Cerrito Y Callao)</b><br/>Monto: $17970000 | Licitada a Naku Construcciones S.R.L. (CUIT 30575292174) | Finalizada el 05/01/2017", -34.63599198, -58.42187459],
+["<b>1097 - Eje Corrientes: Centro Comercial A Cielo Abierto Av. Corrientes (E/ Acevedo Y Julian alvarez)</b><br/>Monto: $19300000 | Licitada a Altote S.A. (CUIT 30707431896) | Finalizada el 08/01/2017", -34.63866892, -58.37458695],
+["<b>1098 - Eje Corrientes: Centro Comercial A Cielo Abierto Av. Corrientes (E/ Mario Bravo Y Palestina)</b><br/>Monto: $28753492 | Licitada a Naku Construcciones S.R.L. (CUIT 30575292174) | Finalizada el 01/09/2017", -34.60829209, -58.4060739],
+["<b>1105 - Entorno Boedo: Puesta En Valor Del Entorno Esquinas Salcedo, Marmol, Las Casas Y Muniz</b><br/>Monto: $17389000 | Licitada a Miavasa S.A. (CUIT 30677303863) | Finalizada el 08/01/2017", -34.54366219, -58.47353063],
+["<b>1106 - Entorno Villa Devoto: Centro Comercial A Cielo Abierto Av. Lope De Vega (E/ Tinogasta Y Gral. Paz)</b><br/>Monto: $32712692 | Licitada a Miavasa S.A. (CUIT 30677303863) | Finalizada el 08/01/2017", -34.62719248, -58.47446788],
+["<b>1108 - Entorno Once: Centro Comercial A Cielo Abierto Av. Pueyrredon Tramo I</b><br/>Monto: $8200000 | Licitada a Miavasa S.A. (CUIT 30677303863) | Finalizada el 01/01/2017", -34.68447949, -58.46455944],
+["<b>1109 - Entorno Once: Centro Comercial A Cielo Abierto Av. Pueyrredon Tramo II</b><br/>Monto: $15300000 | Licitada a Miavasa S.A. (CUIT 30677303863) | Finalizada el 01/01/2017", -34.61235094, -58.42741227],
+["<b>1113 - Entorno Palermo: Paseo Av. Sarmiento (Ramirez)</b><br/>Monto: $17919644 | Licitada a Altote S.A. (CUIT 30707431896) | Finalizada el 01/05/2017", -34.6040511, -58.38724958],
+["<b>1114 - Entorno Flores: Centro Comercial A Cielo Abierto Av. Varela (E/ Eva Peron Y Bajo Autopista Au. 25 De Mayo)</b><br/>Monto: $14118038 | Licitada a Avinco Construcciones S.A (CUIT 33622606939) | Finalizada el 09/01/2017", -34.60405193, -58.38790146],
+["<b>1115 - Entorno Saavedra: Renovacion De Boulevard San Isidro Labrador</b><br/>Monto: $9981000 | Licitada a Salvatori S.A Parques Y Jardines (CUIT 30512700124) | Finalizada el 03/01/2017", -34.57148176, -58.45196316],
+["<b>1116 - Entorno Flores: Centro Comercial A Cielo Abierto Avellaneda E/ Terrada Y Emilio Lamarca</b><br/>Monto: $38889328 | Licitada a Da Fre Obras Civiles S.A (CUIT 30711388768) | Finalizada el 09/01/2017", -34.53686718, -58.46775424],
+["<b>1117 - Entorno Constitucion: Centro Trasbordo Constitucion</b><br/>Monto: $112000000 | Licitada a Bricons S.A.I.C.F.I. - Miavasa S.A.- Union Transitoria De Empresas (CUIT 30714595241) | Finalizada el 01/03/2017", -34.64411205, -58.45368803],
+["<b>1118 - Entorno Lugano: Conector Ambiental Av. Soldado De La Frontera</b><br/>Monto: $38330000 | Licitada a Miavasa S.A. (CUIT 30677303863) | Finalizada el 01/08/2017", -34.56484489, -58.47062198],
+["<b>1125 - Entorno Ferrocarriles: Renovacion Del Entorno En Estacion Colegiales ( FFCC Mitre)</b><br/>Monto: $11974000 | Licitada a Ingecons S.A (CUIT 30683399333) | Finalizada el 04/01/2017", -34.60652853, -58.40069472],
+["<b>1126 - Entorno Ferrocarriles: Renovacion Del Entorno Estacion Rivadavia ( FFCC Mitre)</b><br/>Monto: $19375918 | Licitada a Ilubaires S.A (CUIT 30693811860) | Finalizada el 05/01/2017", -34.60847243, -58.4013635],
+["<b>1128 - Entorno Hospitales: Renovacion Del Entorno Hospital Pirovano</b><br/>Monto: $8700000 | Licitada a Ilubaires S.A (CUIT 30693811860) | Finalizada el 03/01/2017", -34.59719114, -58.39779099],
+["<b>1129 - Entorno La Boca: Renovacion Entorno Del Paseo Caminito</b><br/>Monto: $29577494 | Licitada a Cunumi S.A. (CUIT 30615748036) | Finalizada el 08/01/2017", -34.61427202, -58.43240228],
+["<b>1131 - Entorno Polideportivos: Renovacion Del Entorno En Polideportivo Parque Patricios</b><br/>Monto: $9226000 | Licitada a Naku Construcciones S.R.L. (CUIT 30575292174) | Finalizada el 02/01/2017", -34.63718853, -58.37326636],
+["<b>1132 - Entorno Balvanera: Eje Comercial Av. Entre Rios - Callao (Entre Av. Corrientes Y Av. Garay)</b><br/>Monto: $46473558 | Licitada a Bosquimano S.A (CUIT 30711470022) | Finalizada el 08/01/2017", -34.60866747, -58.37448062],
+["<b>1133 - Entorno Recoleta: Equipamiento C.C. Recoleta</b><br/>Monto: $2780000 | Licitada a Desarrolladora Los Tilos S.A (CUIT 30710622848) | Finalizada el 01/04/2017", -34.62193107, -58.44422388],
+["<b>1140 - Entorno Once: Paseo Comercial</b><br/>Monto: $40900000 | Licitada a Industrias Mas S.R.L / Evessa (CUIT ?) | Finalizada el 01/07/2017", -34.60869019, -58.38351896],
+["<b>1141 - Entorno Barracas: Puesta En Valor De Iglesia Santa Felicitas</b><br/>Monto: $1761000 | Licitada a Di Pietro S.A (CUIT 20044899532) | Finalizada el 04/01/2017", -34.61787782, -58.39162236],
+["<b>1142 - Eje Civico: Iluminacion Fachadas Emblematicas Eje Civico</b><br/>Monto: $2319000 | Licitada a Da Fre Obras Civiles S.A (CUIT 30711388768) | Finalizada el 03/01/2017", -34.59736267, -58.37313457],
+["<b>1148 - Plan Tribunales: Puesta En Valor Fachada Templo Libertad + Museo (Conjunto Cira)</b><br/>Monto: $4212906 | Licitada a Cahem S.A. (CUIT 30708075910) | Finalizada el 10/01/2017", -34.59068635, -58.37987915],
+["<b>1149 - Entorno Microcentro: Puesta En Valor Fachada Del Edificio Ateliers</b><br/>Monto: $33508984 | Licitada a Cahem S.A. (CUIT 30708075910) | Finalizada el 09/01/2017", -34.60247815, -58.49130142],
+["<b>1150 - Eje Civico: Puesta En Valor De Fachadas En Av. De Mayo</b><br/>Monto: $21128720 | Licitada a Cunumi S.A. (CUIT 30615748036) | Finalizada el 11/01/2017", -34.60888756, -58.40602708],
+["<b>1151 - Entorno Balvanera: Puesta En Valor Fachadas En Av. Entre Rios</b><br/>Monto: $3494572 | Licitada a Hit Construcciones S.A (CUIT 30709605158) | Finalizada el 08/01/2017", -34.59567826, -58.37423603],
+["<b>1152 - Entorno Microcentro: Puesta En Valor De Fachadas En Calle Suipacha</b><br/>Monto: $13231160 | Licitada a Hit Construcciones S.A (CUIT 30709605158) | Finalizada el 08/01/2017", -34.56222174, -58.44291522],
+["<b>1153 - Entorno La Boca: Puesta En Valor Fachadas De Caminito</b><br/>Monto: $9547014 | Licitada a Hit Construcciones S.A (CUIT 30709605158) | Finalizada el 11/01/2017", -34.58092734, -58.42179098],
+["<b>1154 - Plan Tribunales: Puesta En Valor De La Fachadas Escuela Presidente Roca</b><br/>Monto: $5361000 | Licitada a Hit Construcciones S.A (CUIT 30709605158) | Finalizada el 04/01/2017", -34.62747433, -58.41596201],
+["<b>1156 - Entorno Retiro: Puesta En Valor Fachada De Iglesia Del Socorro</b><br/>Monto: $3480616 | Licitada a Estudio Ing. Villa S.R.L (CUIT 30707977481) | Finalizada el 01/01/2017", -34.59338544, -58.38006076],
+["<b>1158 - Entorno Retiro: Puesta En Valor Fachada Del Palacio Noel</b><br/>Monto: $2485100 | Licitada a Hit Construcciones S.A (CUIT 30709605158) | Finalizada el 01/01/2017", -34.59386248, -58.37757383],
+["<b>1159 - Villa Del Parque: Puesta En Valor Fachada De Racing Club - Villa Del Parque</b><br/>Monto: $2522918 | Licitada a Rol Ingenieria S.A. (CUIT 30578447659) | Finalizada el 01/01/2017", -34.61813954, -58.38290322],
+["<b>1161 - Entorno Microcentro: Puesta En Valor De Fachadas En Tres Iglesias (Santisimo Sacramento, Metodista Y Alemana)</b><br/>Monto: $6161000 | Licitada a Cahem S.A. (CUIT 30708075910) | Finalizada el 01/02/2017", -34.60154216, -58.38455655],
+["<b>1164 - Bajo Autopista: Recuperacion De Bajo Autopistas 25 De Mayo (Av. Entre Rios, Av. Jujuy, Av. Boedo, Av. La Plata, Av. J. M. Moreno)</b><br/>Monto: $43406958 | Licitada a Algieri S.A (CUIT 30699339810) | Finalizada el 09/01/2017", -34.60105931, -58.3758759],
+["<b>1169 - Entorno Constitucion: Puesta En Valor De Fachada Y Entorno De Santa Casa Ejercicios Espirituales</b><br/>Monto: $5127000 | Licitada a Instalectro S.A. (CUIT 33661628729) | Finalizada el 03/01/2017", -34.6507399364, -58.377668848],
+["<b>25001 - Barrio Los Piletones: Plaza En Manzana 4</b><br/>Monto: $6904948 | Licitada a Urbaser Argentina S.A. (CUIT 30682256504) | Finalizada el 15/12/2017", -34.588793, -58.425232],
+["<b>660 - Obras En Hospitales De Parque Patricios: Hospital Muniz - Construccion Muro Perimetral En La Ochava De Las Avenidas Velez Sarsfield Y Amancio Alcorta Etapa IV</b><br/>Monto: $4131009 | Licitada a Indaltec S.A. (CUIT 30650988600) | Finalizada el 24/04/2017", -34.6372175114993, -58.3929995693862],
+["<b>17 - Parque Olimpico: Demolicion Total, Extraccion Y Trasplante De arboles, Cerco Perimetral</b><br/>Monto: $48590604 | Licitada a Salvatori S.A Parques Y Jardines (CUIT 30512700124) | Finalizada el 28/03/2017", -34.6738968676041, -58.4360597511207],
+["<b>19 - Parque Olimpico: Pabellones A1 Y A2</b><br/>Monto: $194988604 | Licitada a Constructora Sudamericana S.A. (CUIT 30546752271) | Finalizada el 31/12/2017", -34.6738968676041, -58.4360597511207],
+["<b>20 - Parque Olimpico: Pabellones A3 Y A4</b><br/>Monto: $168646366 | Licitada a Criba S.A. (CUIT 30505454436) | Finalizada el 01/12/2017", -34.6738968676041, -58.4360597511207],
+["<b>26 - Villa Olimpica: Estacion Reguladora Y Distribucion De Gas De Villa Olimpica</b><br/>Monto: $15242432 | Licitada a Ucsa S.A. (CUIT 30711492395) | Finalizada el 30/06/2017", -34.6728993035658, -58.4585042701709],
+["<b>89 - Centro De Transbordo Flores</b><br/>Monto: $62201082 | Licitada a Construcciones Ingevial S.A. (CUIT 30650833380) | Finalizada el 09/01/2017", -34.6311249642282, -58.4711929046875],
+["<b>90 - Parque Del Bajo: Bases De Monumentos</b><br/>Monto: $4867440 | Licitada a Construcciones Industriales Avellaneda S.A. (CUIT 30710543271) | Finalizada el 20/09/2017", -34.6073925692611, -58.3698762120186],
+["<b>151 - Villa 15: Eje Radial</b><br/>Monto: $32660647 | Licitada a Mediterraneo S.A (CUIT 30566480618) | Finalizada el 30/11/2017", -34.6679552646081, -58.4936060987917],
+["<b>177 - Obras En Hospitales De Caballito: Hospital Marie Curie - Instalacion Y Montaje De Ascensor Camillero</b><br/>Monto: $33604400 | Licitada a Dalkia Argentina S.A.-Constructora Lanusse S.A.-Salud-UTE (CUIT 30714788171) | Finalizada el 07/07/2017", -34.6070846880877, -58.4328786309778],
+["<b>584 - Obras Comuna 14: Patio De Juegos - Willians Morris</b><br/>Monto: $755686 | Licitada a Vap Construcciones S.R.L. (CUIT 30714522384) | Finalizada el 31/10/2017", -34.5841871522768, -58.427155334973],
+["<b>590 - Obras En Hospitales De Barracas: Hospital Elizalde - Remodelacion Del Sector De Guardia</b><br/>Monto: $985752 | Licitada a Mejoramiento Hospitalario S.A. (CUIT 30707962654) | Finalizada el 30/11/2017", -34.6289061692966, -58.3776119540788],
+["<b>694 - Barrio Los Piletones: Abastecimiento De Agua Potable Manzanas 9 Y 10 - Barrio Los Piletones</b><br/>Monto: $2911675 | Licitada a Cooperativa (CUIT ?) | Finalizada el 16/05/2017", -34.6626075156912, -58.4532532147181],
+["<b>740 - Obras Comuna 14: Patio Urbano Paraguay</b><br/>Monto: $ | Licitada a Estilo Quarzo S.R.L (CUIT 30711780846) | Finalizada el 15/06/2017", -34.5799433655807, -58.4303956129058],
+["<b>1000 - Villa 21 24: Club Zavaleta Jr Etapa 2</b><br/>Monto: $294174 | Licitada a Cooperativa (CUIT ?) | Finalizada el 15/09/2017", -34.650999130551, -58.4001262906604],
+["<b>1012 - Entorno Cildanez: Boulevard De La Salle Y Manzana A: Reacondicionamiento En Sector Entre Canchas Y Contrapiso Patio De Juegos Y Manzana 'A', Revoque En Pasillos</b><br/>Monto: $1295968 | Licitada a Cooperativa (CUIT ?) | Finalizada el 28/11/2017", -34.6550851966876, -58.4726076646316],
+["<b>1043 - Distrito Del Deporte: Construccion De Sanitarios Para Personal De Boleteria - Club San Lorenzo De Almagro</b><br/>Monto: $623000 | Licitada a Cylp S.A (CUIT 30567789000) | Finalizada el 02/10/2017", -34.6544349185373, -58.436475848601],
+["<b>1044 - Ctc: Obras Complementarias De La Construccion De Un Acceso Provisorio Al Ctc - Traza Parcial Futura Rama 8</b><br/>Monto: $820006 | Licitada a Maquivial S.A.I (CUIT 30548939689) | Finalizada el 03/11/2017", -34.6729074082641, -58.4354007125067],
+["<b>1053 - Distrito Del Deporte: Anexo Club Torino - Mejoras En Cancha De Futbol</b><br/>Monto: $1366669 | Licitada a Cooperativa (CUIT ?) | Finalizada el 16/04/2017", -34.6611108397883, -58.4770434804253],
+["<b>1054 - Buenos Aires Playa 2017: Parque Indoamericano - Instalacion Electrica</b><br/>Monto: $72934 | Licitada a Martinez Cesar Javier (CUIT 20273633325) | Finalizada el 07/01/2017", -34.6649856055208, -58.4693891150288],
+["<b>1059 - Barrio 26 De Junio: Obras De Tendido De Agua Potable (Infraestructura) Complejo Habitacional 33 Viviendas</b><br/>Monto: $2275049 | Licitada a Kopar S.A (CUIT 30707504990) | Finalizada el 13/04/2017", -34.6559946277464, -58.4506977531921],
+["<b>1069 - Obras Comuna 1: Restauracion Del Frente Luis Saenz Pena Nº 1620- Caba</b><br/>Monto: $422723 | Licitada a Lumi Construcciones S.A. (CUIT 30711229899) | Finalizada el 20/07/2017", -34.6275331093627, -58.3871045415267],
+["<b>1092 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Provision E Instalacion De Butacas En Tribuna Central</b><br/>Monto: $1436125 | Licitada a Diseno Y Equipamientos S.R.L. (CUIT 30708288353) | Finalizada el 16/07/2017", -34.6980018162953, -58.4698263017463],
+["<b>1103 - Caniles: Santojanni</b><br/>Monto: $ | Licitada a ? (CUIT ?) | Finalizada el 04/10/2017", -34.647482113228, -58.5137163778171],
+["<b>1196 - Plan 30 Creacion: Jardin De Infantes Integral Nro 3</b><br/>Monto: $5977447 | Licitada a Co.Se.Ba S.A. (CUIT 30678613033) | Finalizada el 30/03/2017", -34.5532471879329, -58.4891515969512],
+["<b>1225 - Escuela De Reemplazo: Escuela De Teatro</b><br/>Monto: $12499378 | Licitada a Dilthey S.A. (CUIT 30711331847) | Finalizada el 27/09/2017", -34.6507996002282, -58.5068234397124],
+["<b>1297 - Mejora Edilicia: Esc. Primaria Comun Nro 13 Raul Scalabrini Ortiz / Jardin De Infantes Comun Nro 07</b><br/>Monto: $695486 | Licitada a Dal Construcciones S.A. (CUIT 30604370171) | Finalizada el 20/10/2017", -34.5802232852165, -58.4454431273207],
+["<b>1313 - Mejora Edilicia: Esc. Primaria Comun Nro 16 Ricardo Rojas</b><br/>Monto: $446922 | Licitada a Mediterraneo S.A (CUIT 30566480618) | Finalizada el 27/11/2017", -34.5909427031752, -58.5075909450444],
+["<b>1321 - Obras Generales: Esc. Primaria Comun Nro 18 Provincia De Tierra Del Fuego</b><br/>Monto: $5600000 | Licitada a Industrias Mas S.R.L (CUIT 30707041990) | Finalizada el 06/09/2017", -34.6109426593444, -58.488196618873],
+["<b>5090 - Entorno Palermo: Nuevo Acceso Jardin Botanico De La Ciudad De Buenos Aires Carlos Thays</b><br/>Monto: $3453493 | Licitada a Constructora Solana S.A (CUIT 30714318337) | Finalizada el 02/04/2017", -34.5837310807092, -58.4178839927396],
+["<b>5115 - Plazas De Proximidad: Nueva Plaza De Proximidad: Cramer 475</b><br/>Monto: $5254547 | Licitada a Parquizar Ses S.A. - Mantelectric I.C.I.S.A. - Ute (CUIT 30712217487) | Finalizada el 10/07/2017", -34.574750305428, -58.4448572298098],
+["<b>5127 - Entorno Palermo: Puesta En Valor Integral Parque Las Heras</b><br/>Monto: $56809263 | Licitada a Salvatori S.A Parques Y Jardines (CUIT 30512700124) | Finalizada el 02/11/2017", -34.5834560867067, -58.4061776318803],
+["<b>13191 - Entorno Cildanez: Manzana C - Infraestructura Pluvial, Cloacal, Agua Corriente Y Veredas</b><br/>Monto: $2251194 | Licitada a Cooperativa (CUIT ?) | Finalizada el 15/11/2017", -34.6581467119573, -58.4720375370216],
+["<b>13197 - Mejora Edilicia: Esc. Primaria Comun Nro 17 Pedro Meliton Ledesma</b><br/>Monto: $883167 | Licitada a Betonhaus S.A. (CUIT 30708568240) | Finalizada el 15/06/2017", -34.6516953460882, -58.4148440454063],
+["<b>13201 - Mejora Edilicia: Esc. Primaria Comun Nro 10 Dr. Ramon J. Carcano</b><br/>Monto: $2929698 | Licitada a Co.Se.Ba S.A. (CUIT 30678613033) | Finalizada el 09/09/2017", -34.5800834590119, -58.4844303331183],
+["<b>13204 - Mejora Edilicia: Esc. Primaria Comun Nro 18 Dr. Rafael Herrera Vegas</b><br/>Monto: $1015751 | Licitada a Di Pietro S.A (CUIT 20044899532) | Finalizada el 06/08/2017", -34.5835669939419, -58.4053515199478],
+["<b>13292 - Obras Generales: Esc. Primaria Comun Nro 23 Belisario Roldan</b><br/>Monto: $1965719 | Licitada a Spinelli & Asociados S.R.L. (CUIT 30709411876) | Finalizada el 31/10/2017", -34.5778846989887, -58.5006758751371],
+["<b>25000 - Distrito De Las Artes: Plaza Verde Usina Del Arte</b><br/>Monto: $17451932 | Licitada a Building Co S.R.L (CUIT 30708969881) | Finalizada el 20/10/2017", -34.6290579802522, -58.355833260433],
+["<b>25012 - Plazas Y Parques: Veredas Parque Centenario</b><br/>Monto: $9843854 | Licitada a Casa Machi S.A (CUIT 30608125201) | Finalizada el 17/02/2017", -34.608637383273, -58.436217194731],
+["<b>25014 - Bibliotecas: Puesta En Valor Biblioteca Julio Cortazar - Casa De La Lectura</b><br/>Monto: $4206200 | Licitada a ? (CUIT ?) | Finalizada el 01/09/2017", -34.59788444104, -58.4298033003533],
+["<b>25021 - Comisarias: Comisaria 30</b><br/>Monto: $25234127 | Licitada a Miavasa S.A. (CUIT 30677303863) | Finalizada el 24/10/2017", -34.647183873385, -58.374815982096],
+["<b>25074 - Buenos Aires Playa 2017: Parque Indoamericano - Obra Civil</b><br/>Monto: $901584 | Licitada a Cooperativa (CUIT ?) | Finalizada el 01/04/2017", -34.6649856055208, -58.4693891150288],
+["<b>4 - area Ambiental Central: Calle Esmeralda I</b><br/>Monto: $26938294 | Licitada a Dal Construcciones S.A. (CUIT 30604370171) | Finalizada el 28/02/2017", -34.6034869708627, -58.3780780925184],
+["<b>6 - Villa Olimpica: Viviendas II</b><br/>Monto: $148823367 | Licitada a Emaco S.A. - Lanusse S.A. Ute (CUIT 30714969362) | Finalizada el 13/08/2017", -34.6737481938886, -58.4590036131792],
+["<b>7 - Villa Olimpica: Viviendas III</b><br/>Monto: $179192366 | Licitada a Bricons S.A.I.C.F.I. (CUIT 30541068151) | Finalizada el 08/10/2017", -34.6737481938886, -58.4590036131792],
+["<b>8 - Villa Olimpica: Viviendas IV</b><br/>Monto: $163279322 | Licitada a Dycasa S.A. (CUIT 33516294189) | Finalizada el 30/08/2017", -34.6737481938886, -58.4590036131792],
+["<b>10 - Villa Olimpica: Viviendas V</b><br/>Monto: $166503404 | Licitada a Dycasa S.A. (CUIT 33516294189) | Finalizada el 30/09/2017", -34.6737481938886, -58.4590036131792],
+["<b>11 - Villa Olimpica: Viviendas VI</b><br/>Monto: $160833300 | Licitada a Criba S.A. (CUIT 30505454436) | Finalizada el 30/08/2017", -34.6737481938886, -58.4590036131792],
+["<b>12 - Villa Olimpica: Viviendas VII</b><br/>Monto: $123691183 | Licitada a Cunumi S.A. (CUIT 30615748036) | Finalizada el 15/11/2017", -34.6737481938886, -58.4590036131792],
+["<b>13 - Villa Olimpica: Viviendas VIII</b><br/>Monto: $174609630 | Licitada a Constructora Sudamericana S.A. (CUIT 30546752271) | Finalizada el 15/11/2017", -34.6737481938886, -58.4590036131792],
+["<b>14 - Villa Olimpica: Viviendas X</b><br/>Monto: $98174265 | Licitada a Vidogar Construcciones S.A. (CUIT 30553433564) | Finalizada el 30/12/2017", -34.6737481938886, -58.4590036131792],
+["<b>16 - Villa Olimpica: Viviendas I</b><br/>Monto: $154853715 | Licitada a Cavcon S.A. (CUIT 30700895560) | Finalizada el 20/12/2017", -34.6737481938886, -58.4590036131792],
+["<b>35 - Obras Hidraulicas Y Redes Pluviales: Ramal Austria I</b><br/>Monto: $75368613 | Licitada a Tecma S.A. (CUIT 30623866528) | Finalizada el 19/06/2017", -34.5865851555223, -58.3858523008246],
+["<b>38 - Obras Hidraulicas Y Redes Pluviales: Ampliacion Red Pluvial VI - Ramal Escalada</b><br/>Monto: $52685356 | Licitada a Altote S.A. - Naku Construcciones S.R.L. - (Ute) (CUIT 30714382450) | Finalizada el 10/12/2017", -34.6896258303978, -58.4776224849345],
+["<b>48 - Metrobus Del Bajo: Paradores - Etapa I</b><br/>Monto: $229538623 | Licitada a Riva S.A. (CUIT 33504596309) | Finalizada el 15/07/2017", -34.6088315009741, -58.3696577971107],
+["<b>49 - Camino De Sirga II</b><br/>Monto: $40774370 | Licitada a Bricons S.A.I.C.F.I. (CUIT 30541068151) | Finalizada el 31/05/2017", -34.6510656459936, -58.4005697391892],
+["<b>57 - Metrobus Del Bajo: Tareas Preliminares Y Cerco De Obra - Etapa I</b><br/>Monto: $4756449 | Licitada a Construcciones Ingevial S.A. (CUIT 30650833380) | Finalizada el 31/07/2017", -34.6088315009741, -58.3696577971107],
+["<b>647 - Obras En Hospitales De Flores: Hospital Alvarez - Proyecto, Montaje Y Normalizacion De Instalacion Interna Pabellones I, V, XV, XVI</b><br/>Monto: $3881756 | Licitada a Cooperativa De Trabajo Evita Limitada (CUIT 30714559474) | Finalizada el 03/02/2017", -34.6242921617282, -58.4694218408327],
+["<b>650 - Obras En Hospitales De Caballito: Hospital Marie Curie - Proyecto, Construccion, Montaje, Normalizacion, Habilitacion Y Puesta En Marcha De Ramal Y Servicio De Gas - Parte I</b><br/>Monto: $3046562 | Licitada a Cooperativa De Trabajo Evita Limitada (CUIT 30714559474) | Finalizada el 19/01/2017", -34.6070846880877, -58.4328786309778],
+["<b>651 - Obras En Hospitales De Caballito: Hospital Durand - Proyecto, Montaje Y Normalizacion De Instalacion Interna Edificios VI Y XI</b><br/>Monto: $2888560 | Licitada a Cooperativa De Trabajo La unica Ltda. (CUIT 30710261012) | Finalizada el 23/01/2017", -34.6088715380348, -58.4378883759306],
+["<b>1166 - Entorno Retiro: Retiro Etapa II: Suipacha I + Sgto. Cabral + Juncal</b><br/>Monto: $14460774 | Licitada a Cunumi S.A. (CUIT 30615748036) | Finalizada el 08/01/2017", -34.6239225542, -58.3655131199],
+["<b>1173 - Plan Tribunales: Tribunales III: Celles Del Entorno Plaza Lavalle</b><br/>Monto: $25455372 | Licitada a Bosquimano S.A (CUIT 30711470022) | Finalizada el 01/07/2017", -34.6404471528, -58.5170789864],
+["<b>3 - area Ambiental Central: Calles Alsina Y Moreno</b><br/>Monto: $36942632 | Licitada a Rol Ingenieria S.A. (CUIT 30578447659) | Finalizada el 15/11/2017", -34.6107259046774, -58.3806001913762],
+["<b>24 - Villa Olimpica: Red De Agua Y Cloacas</b><br/>Monto: $35787390 | Licitada a Reconstruccion De Canos S.A. (CUIT 30677790977) | Finalizada el 11/01/2017", -34.6896258303978, -58.4776224849345],
+["<b>30 - Villa Olimpica: Centro De Desarrollo Infantil Rayito De Sol</b><br/>Monto: $48500000 | Licitada a Cunumi S.A. (CUIT 30615748036) | Finalizada el 15/11/2017", -34.6781149929409, -58.4530260976062],
+["<b>53 - Centro De Exposiciones Y Convenciones: Centro De Exposiciones Y Convenciones: Ampliacion Red De Agua Y Cloacas</b><br/>Monto: $8897525 | Licitada a Construcciones, Infraestructura Y Servicios S.A. (CUIT 30710393881) | Finalizada el 14/01/2017", -34.5847842935617, -58.3892534948038],
+["<b>60 - Paso Bajo Nivel Beiro</b><br/>Monto: $114299267 | Licitada a Benito Roggio - Esuco (Ute) (CUIT 30709479896) | Finalizada el 14/03/2017", -34.5930874119716, -58.4911361133502],
+["<b>62 - Teatro Colon: Instituto Superior De Arte Teatro Colon</b><br/>Monto: $4062200 | Licitada a Premart S.R.L. (CUIT 30709331031) | Finalizada el 26/06/2017", -34.6256232765928, -58.4018588332134],
+["<b>73 - Donado Holmberg: Centro De Gestion Y Participacion Comuna 12</b><br/>Monto: $36725502 | Licitada a Conorvial S.A. (CUIT 30516492747) | Finalizada el 14/04/2017", -34.5685070458516, -58.4777289463288],
+["<b>75 - area Ambiental Central: Calle Tacuari</b><br/>Monto: $19981404 | Licitada a Dal Construcciones S.A. (CUIT 30604370171) | Finalizada el 31/07/2017", -34.6106296103927, -58.3791273959026],
+["<b>78 - Comisaria 22</b><br/>Monto: $1276501 | Licitada a Ecosan S.A. (CUIT 30707696849) | Finalizada el 15/02/2017", -34.6254126362875, -58.3609479395971],
+["<b>79 - Laboratorio De La Policia Cientifica</b><br/>Monto: $62590455 | Licitada a Ecosan S.A. (CUIT 30707696849) | Finalizada el 30/09/2017", -34.6445770884554, -58.3972815765346],
+["<b>81 - Teatro Colon: Completamiento Del 4 Piso Del Teatro Colon</b><br/>Monto: $17176125 | Licitada a Rol Ingenieria S.A. (CUIT 30578447659) | Finalizada el 30/11/2017", -34.6010514848815, -58.3824414002727],
+["<b>82 - Intervencion Centro Parque Patricios</b><br/>Monto: $8245624 | Licitada a Dragoniar (CUIT 30707439587) | Finalizada el 30/04/2017", -34.6371173816198, -58.4056107943587],
+["<b>92 - Parque Del Bajo: Movimiento De Mastil</b><br/>Monto: $5840155 | Licitada a Kir S.R.L (CUIT 30702232046) | Finalizada el 31/12/2017", -34.5689802, -58.4776984],
+["<b>113 - Obras En Hospitales De La Boca: Sanidad De Frontera - Ministerio De Salud</b><br/>Monto: $12450513 | Licitada a Ernesto Tarnousky S.A. (CUIT 30628970714) | Finalizada el 30/03/2017", -34.627020134189, -58.3584731603382],
+["<b>160 - Ecoparque: Switches Para Telefonia Ip- Solucion Asi</b><br/>Monto: $3650000 | Licitada a Silk Tech S.R.L (CUIT 30714440248) | Finalizada el 15/12/2017", -34.5783194456225, -58.4148211012661],
+["<b>176 - Obras En Hospitales De Paternal: Hospital Alvear - Trabajos De Instalaciones Termo Mecanicas Y Electricas En Pabellon Nro 1, Etapa 1</b><br/>Monto: $15264748 | Licitada a Mejoramiento Hospitalario S.A. (CUIT 30707962654) | Finalizada el 11/01/2017", -34.5971213143408, -58.4758887580725],
+["<b>180 - Obras En Hospitales De Parque Patricios: Hospital Penna - Obra Centro Transformacion</b><br/>Monto: $23152389 | Licitada a Indaltec S.A. (CUIT 30650988600) | Finalizada el 31/10/2017", -34.6430517547785, -58.4114123648285],
+["<b>181 - Obras En Hospitales De Balvanera: Hospital Ramos Mejia - Remodelacion Integral Medicina Nuclear Y Obras Varias</b><br/>Monto: $6150537 | Licitada a Ses S.A. (CUIT 30647727545) | Finalizada el 23/02/2017", -34.6176205106544, -58.4094003246186],
+["<b>185 - Obras En Hospitales De Monte Castro: Hospital Velez Sarfield - Remodelacion Guardia</b><br/>Monto: $135485000 | Licitada a Sehos S.A. (CUIT 30649820704) | Finalizada el 30/12/2017", -34.625226960523, -58.5074990487972],
+["<b>217 - Obras Comuna 5: Avenida Yrigoyen - Etapa 4</b><br/>Monto: $4870300 | Licitada a Rassa Construcciones S.R.L. (CUIT 30711150060) | Finalizada el 31/10/2017", -34.6146495554682, -58.4202116691801],
+["<b>228 - Entorno Cildanez: Eje White</b><br/>Monto: $17439199 | Licitada a Servicios Ibarra S.A. (CUIT 30712217444) | Finalizada el 30/11/2017", -34.6557527873964, -58.4766001263333],
+["<b>238 - Barrio 26 De Junio: Puesta En Valor Pasillos De Uso Comun – 33 Viviendas</b><br/>Monto: $2829803 | Licitada a Cooperativa (CUIT ?) | Finalizada el 07/07/2017", -34.6554978479128, -58.4514605096342],
+["<b>294 - Bibliotecas: Puesta En Valor Biblioteca Jose Hernandez</b><br/>Monto: $755000 | Licitada a ? (CUIT ?) | Finalizada el 01/08/2017", -34.6463614939345, -58.520962858836],
+["<b>296 - Ecoparque: Consultoria Edif.Patrim. Estructuralista</b><br/>Monto: $210000 | Licitada a Pablo Luis Dieguez (CUIT 20125490248) | Finalizada el 31/10/2017", -34.5783194456225, -58.4148211012661],
+["<b>297 - Ecoparque: Oficinas (Obra)</b><br/>Monto: $2685000 | Licitada a Ediser S.R.L (CUIT 30714414611) | Finalizada el 16/11/2017", -34.5783194456225, -58.4148211012661],
+["<b>298 - Ecoparque: Oficinas (Muebles)</b><br/>Monto: $1888807 | Licitada a Prodmobi S.A (CUIT 30710069553) | Finalizada el 26/11/2017", -34.5783194456225, -58.4148211012661],
+["<b>299 - Ecoparque: Bioterio Remodelacion</b><br/>Monto: $345000 | Licitada a Punto H S.A (CUIT 33714586799) | Finalizada el 21/10/2017", -34.5783194456225, -58.4148211012661],
+["<b>301 - Ecoparque: Adecuacion De Pgma (Comedor-Biblioteca- Nutricion)</b><br/>Monto: $1649170 | Licitada a Industrias Mas S.R.L (CUIT 30707041990) | Finalizada el 07/12/2017", -34.5783194456225, -58.4148211012661],
+["<b>302 - Ecoparque: Calefones Solares (25 Recintos)</b><br/>Monto: $305388 | Licitada a Sergio Marcelo Bolzan (CUIT 20208307259) | Finalizada el 13/10/2017", -34.5783194456225, -58.4148211012661],
+["<b>306 - Ecoparque: Oso Hormiguero - Modificaciones En Recinto</b><br/>Monto: $335000 | Licitada a Punto H S.A (CUIT 33714586799) | Finalizada el 11/09/2017", -34.5783194456225, -58.4148211012661],
+["<b>307 - Ecoparque: Monario arabe - Modificaciones De Recinto</b><br/>Monto: $610907 | Licitada a Punto H S.A (CUIT 33714586799) | Finalizada el 12/05/2017", -34.5783194456225, -58.4148211012661],
+["<b>308 - Ecoparque: Intervenciones Correctivas De Urgencia En Recintos</b><br/>Monto: $3123200 | Licitada a Constructora Premart S.R.L (CUIT 30709331031) | Finalizada el 20/12/2017", -34.5783194456225, -58.4148211012661],
+["<b>309 - Ecoparque: Impermeabilizacion De Techo Recintos (3100 M2)</b><br/>Monto: $2890571 | Licitada a Lemme Obras Civiles S.R.L (CUIT 30712255249) | Finalizada el 14/11/2017", -34.5783194456225, -58.4148211012661],
+["<b>310 - Ecoparque: Elefante 2da Etapa</b><br/>Monto: $510200 | Licitada a Punto H S.A (CUIT 33714586799) | Finalizada el 31/10/2017", -34.5783194456225, -58.4148211012661],
+["<b>312 - Ecoparque: Nuevas Mangas De Manejo</b><br/>Monto: $479329 | Licitada a Rs Montajes Y Obras S.R.L (CUIT 30688475062) | Finalizada el 22/12/2017", -34.5783194456225, -58.4148211012661],
+["<b>377 - Villa 21 24: Pasaje Daniel De La Sierra</b><br/>Monto: $17272505 | Licitada a Kopar S.A (CUIT 30707504990) | Finalizada el 30/11/2017", -34.6560018233877, -58.3949530082987],
+["<b>381 - Soldati: Ampliacion Nido Soldati</b><br/>Monto: $7334313 | Licitada a Vivero Cuculo S.R.L (CUIT 30650273652) | Finalizada el 30/11/2017", -34.6649883408768, -58.4430220526227],
+["<b>382 - Villa 15: Eje Ferroviario</b><br/>Monto: $14446296 | Licitada a Kopar S.A (CUIT 30707504990) | Finalizada el 30/11/2017", -34.6665767135446, -58.49220512269],
+["<b>384 - Villa 1 11 14: Eje Aliviador Varela</b><br/>Monto: $5971260 | Licitada a Dolcor S.R.L (CUIT 30710137621) | Finalizada el 01/11/2017", -34.6509596443306, -58.4446325188047],
+["<b>386 - Obras Comuna 7: Subsede Parque Chacabuco</b><br/>Monto: $13933231 | Licitada a Grim Constructora S.A. (CUIT 30633268084) | Finalizada el 26/10/2017", -34.6322490448468, -58.4411172016935],
+["<b>388 - Obras Comuna 6: Esquina Centenera Y Bonifacio - Nuevo Espacio Verde</b><br/>Monto: $6654020 | Licitada a Vap Construcciones S.R.L. (CUIT 30714522384) | Finalizada el 30/11/2017", -34.6277691609005, -58.4402888236267],
+["<b>392 - Obras Comuna 15: Sede Comunal 15 - 2ro Etapa - Modificacion Layout</b><br/>Monto: $8791277 | Licitada a Graft Estudio S.R.L (CUIT 30708506903) | Finalizada el 29/07/2017", -34.5869855619337, -58.4412549686127],
+["<b>407 - Ecoparque: Osos/Chimpance/Orangutan - Modificaciones En Recinto</b><br/>Monto: $1645600 | Licitada a Conibra S.R.L (CUIT 30707433910) | Finalizada el 11/09/2017", -34.5783194456225, -58.4148211012661],
+["<b>409 - Ecoparque: Necropsia</b><br/>Monto: $916817 | Licitada a Development Cosec (CUIT 30709861855) | Finalizada el 15/09/2017", -34.5783194456225, -58.4148211012661],
+["<b>419 - Barrio 31: Plaza Manzana 103</b><br/>Monto: $ | Licitada a Cooperativa (CUIT ?) | Finalizada el 15/09/2017", -34.5840590811138, -58.3736637765911],
+["<b>420 - Barrio 31: Plaza De Los Gordos - Triangulo</b><br/>Monto: $ | Licitada a Cooperativa (CUIT ?) | Finalizada el 20/09/2017", -34.5836687486085, -58.3742948379232],
+["<b>424 - Barrio 31: Cancha Lujan</b><br/>Monto: $ | Licitada a Cooperativa (CUIT ?) | Finalizada el 16/08/2017", -34.5836355005228, -58.374357419512],
+["<b>433 - Barrio 31: Reordenamiento Av. Gendarmeria Nacional</b><br/>Monto: $ | Licitada a Ente De Mantenimiento Urbano Integral (EMUI) (CUIT ?) | Finalizada el 30/08/2017", -34.5835191319909, -58.3745764546915],
+["<b>448 - Obras En Hospitales De Palermo: Hospital Fernandez - Readecuacion Fisica Angiografo (Solo Obra)</b><br/>Monto: $8660000 | Licitada a Philips Argentina Sociedad Anonima (CUIT 30500527230) | Finalizada el 27/07/2017", -34.5810424261961, -58.4067611323878],
+["<b>459 - Obras En Hospitales De Recoleta: Hospital Gutierrez - Trabajos De Remodelacion Del Sector De Guardia, Hall Central Y De Banos Publicos</b><br/>Monto: $2391883 | Licitada a Mejores Hospitales S.A (CUIT 30647354072) | Finalizada el 13/11/2017", -34.5945227897072, -58.4107319065599],
+["<b>468 - Obras En Hospitales De Palermo: Hospital Fernandez - Infraestructura Y Seguridad - 1ro Etapa</b><br/>Monto: $6842615 | Licitada a Mig S.A. (CUIT 30561265255) | Finalizada el 31/03/2017", -34.5810424261961, -58.4067611323878],
+["<b>487 - Obras Comuna 1: Ensanche Constitucion</b><br/>Monto: $1741124 | Licitada a Kiva Construcciones S.A (CUIT 30714444936) | Finalizada el 05/10/2017", -34.6246417322134, -58.3808961129521],
+["<b>488 - Obras Comuna 9: Plazoletas Bruix</b><br/>Monto: $3136293 | Licitada a Estilo Quarzo S.R.L (CUIT 30711780846) | Finalizada el 05/09/2017", -34.6448733683404, -58.4952521276032],
+["<b>567 - Museos: Museo Cine Pablo C. Ducros Hicken</b><br/>Monto: $3409000 | Licitada a ? (CUIT ?) | Finalizada el 09/01/2017", -34.629604149609, -58.3569879400414],
+["<b>568 - Museos: Museo Eduardo Sivori</b><br/>Monto: $5628579 | Licitada a ? (CUIT ?) | Finalizada el 01/08/2017", -34.570716451376, -58.4211649428916],
+["<b>569 - Museos: Museo Enrique Larreta</b><br/>Monto: $2000000 | Licitada a ? (CUIT ?) | Finalizada el 01/07/2017", -34.5611266315719, -58.4552651415506],
+["<b>570 - Museos: Museo Fernandez Blanco</b><br/>Monto: $935000 | Licitada a ? (CUIT ?) | Finalizada el 08/01/2017", -34.5908982447642, -58.3799312891724],
+["<b>572 - Ecoparque: Equipamiento De Quirofano</b><br/>Monto: $4669930 | Licitada a Gemed S.R.L-Adox S.A.-Bahurac S.A.-Geodigital Group S.R.L-Guido Matias Altamirano-Instruequipos S.A-Kifer Medical S.A-Mdv Srl-Proveeduria Medica Srl-Quiro-Med Sacif, (CUIT ?) | Finalizada el 10/07/2017", -34.5783194456225, -58.4148211012661],
+["<b>573 - Ecoparque: Tapir - Modificaciones En Recinto</b><br/>Monto: $ | Licitada a ? (CUIT ?) | Finalizada el 12/05/2017", -34.5783194456225, -58.4148211012661],
+["<b>582 - Obras Comuna 14: Patios De Juegos - Pigue</b><br/>Monto: $1408272 | Licitada a Vap Construcciones S.R.L. (CUIT 30714522384) | Finalizada el 31/10/2017", -34.5652900558126, -58.4382911899396],
+["<b>583 - Obras Comuna 14: Patios De Juegos -Niceto Vega</b><br/>Monto: $1611936 | Licitada a Vap Construcciones S.R.L. (CUIT 30714522384) | Finalizada el 31/10/2017", -34.5893593277128, -58.4354731609495],
+["<b>585 - Villa 1 11 14: Cancha De Los Paraguayos</b><br/>Monto: $2891513 | Licitada a Terminal 3 S.A (CUIT 30710258445) | Finalizada el 30/07/2017", -34.6845417459, -58.4641467995],
+["<b>591 - Obras En Hospitales De Palermo: Hospital Fernandez - Remodelacion Del Sector De Guardia</b><br/>Monto: $2579655 | Licitada a Mig S.A. (CUIT 30561265255) | Finalizada el 15/08/2017", -34.5810424261961, -58.4067611323878],
+["<b>592 - Obras En Hospitales De Parque Patricios: Hospital Penna - Modificaciones En El Sistema De Climatizacion De Neonatologia</b><br/>Monto: $350000 | Licitada a Tecnaran S.R.L. (CUIT 30710210000) | Finalizada el 08/09/2017", -34.6430517547785, -58.4114123648285],
+["<b>594 - Obras En Hospitales De Flores: Hospital Pinero - Remodelacion Del Sector Guardia</b><br/>Monto: $1900011 | Licitada a Lesko S.A.C.I.F.I.A. (CUIT 30520282528) | Finalizada el 26/10/2017", -34.6441243289697, -58.4536745869801],
+["<b>595 - Obras En Hospitales De Recoleta: Hospital Rivadavia - Trabajos De Remodelacion Del Sector De Guardia</b><br/>Monto: $14893428 | Licitada a Mantelectric I.C.I.S.A., Riva S.A.I.I.C.F.A. Ute (CUIT 30711854386) | Finalizada el 08/01/2017", -34.5843552484895, -58.4008112524066],
+["<b>596 - Obras En Hospitales De Liniers: Hospital Santojanni - Remodelacion Guardia</b><br/>Monto: $5813679 | Licitada a Indaltec S.A. (CUIT 30650988600) | Finalizada el 01/09/2017", -34.649353382263, -58.5158005646782],
+["<b>597 - Obras En Hospitales De Monte Castro: Hospital Velez Sarfield - Remodelacion Guardia</b><br/>Monto: $1748496 | Licitada a Sehos S.A. (CUIT 30649820704) | Finalizada el 08/01/2017", -34.625226960523, -58.5074990487972],
+["<b>598 - Obras En Hospitales De Villa Devoto: Hospital Zubizarreta - Remodelacion Guardia</b><br/>Monto: $11089624 | Licitada a Sehos S.A. (CUIT 30649820704) | Finalizada el 27/11/2017", -34.5999046597321, -58.5112049294097],
+["<b>640 - Obras Comuna 14: Sede Comunal 14 - Reforma</b><br/>Monto: $6081664 | Licitada a Grim Constructora S.A. (CUIT 30633268084) | Finalizada el 20/02/2017", -34.5872332174827, -58.4094378450473],
+["<b>644 - Centros De Salud De Villa Lugano: Adecuacion Edilicia Para La Instalacion Del Cesac Nro 28</b><br/>Monto: $4000000 | Licitada a Mad Desarollos S.R.L. (CUIT 30715105213) | Finalizada el 31/01/2017", -34.6845380751747, -58.4641468073126],
+["<b>645 - Centros De Salud De Villa Lugano: Adecuacion Edilicia Para La Instalacion Del Cesac Nro 3</b><br/>Monto: $3983941 | Licitada a Mad Desarollos S.R.L. (CUIT 30715105213) | Finalizada el 06/06/2017", -34.6845380751747, -58.4641468073126],
+["<b>646 - Centros De Salud De Villa Del Parque: Colocacion De Membrana Nueva En Azotea Del Cesac Nro 34</b><br/>Monto: $834229 | Licitada a Sehos S.A. (CUIT 30649820704) | Finalizada el 12/06/2017", -34.6065356091196, -58.4781476936859],
+["<b>648 - Obras En Hospitales De Barracas: Hospital Borda - Relocalizacion Servicio Bulimia Y Anorexia Del Pabellon Central</b><br/>Monto: $8108578 | Licitada a Sunil S.A. (CUIT 30516354247) | Finalizada el 10/01/2017", -34.6365370096197, -58.3818785437976],
+["<b>649 - Obras En Hospitales De Caballito: Hospital Marie Curie - Construccion De Una Nueva Morgue</b><br/>Monto: $5394334 | Licitada a Dalkia Argentina S.A.; Constructora Lanusse S.A. Y U.T.E. S.A. (CUIT 30711831874) | Finalizada el 30/01/2017", -34.6070846880877, -58.4328786309778],
+["<b>652 - Centros De Salud De Almagro: Edificio Av. Medrano 350 - Refuncionalizacion 3ro Piso, Sector Administrativo</b><br/>Monto: $7489486 | Licitada a Juan Pablo Boyatjian (CUIT 20256690315) | Finalizada el 13/10/2017", -34.6066113169962, -58.4214273975518],
+["<b>656 - Obras En Hospitales De Barracas: Hospital Moyano - Reparacion De Terraza Y Tanque De Agua En Clinica Medica</b><br/>Monto: $2279344 | Licitada a Ses S.A. (CUIT 30647727545) | Finalizada el 03/01/2017", -34.6390798058117, -58.3843248363911],
+["<b>657 - Obras En Hospitales De Barracas: Hospital Moyano - Cambio De Bomba De Agua Y Adecuacion De Sala En Tanque Torre</b><br/>Monto: $2933662 | Licitada a Ses S.A. (CUIT 30647727545) | Finalizada el 24/02/2017", -34.6390798058117, -58.3843248363911],
+["<b>658 - Obras En Hospitales De Parque Patricios: Hospital Muniz - Remodelacion Sala 32 De Pediatria</b><br/>Monto: $22616453 | Licitada a Henisa Sudamericana S.A. (CUIT 33668217759) | Finalizada el 02/10/2017", -34.6372175114993, -58.3929995693862],
+["<b>661 - Obras En Hospitales De Flores: Hospital Pinero - Normalizacion Integral De Gas– 1º Etapa</b><br/>Monto: $4466925 | Licitada a Cooperativa De Trabajo La Unica Ltda. (CUIT 30710261012) | Finalizada el 26/10/2017", -34.6441243289697, -58.4536745869801],
+["<b>664 - Obras En Hospitales De Parque Patricios: Hospital Udaondo - Mejoras En El Acceso A Personas Con Movilidad Reducida En Pabellon A</b><br/>Monto: $3723201 | Licitada a Indaltec S.A. (CUIT 30650988600) | Finalizada el 20/02/2017", -34.6343458788506, -58.3913609234425],
+["<b>669 - Obras En Hospitales De Recoleta: Hospital Gutierrez - Proyecto, Aprobacion, Normalizacion Y Habilitacion De Instalacion De Gas - Pabellones D Y F</b><br/>Monto: $5000000 | Licitada a Cooperativa De Trabajo Evita Limitada (CUIT 30714559474) | Finalizada el 16/05/2017", -34.5945227897072, -58.4107319065599],
+["<b>670 - Obras En Hospitales De Coghlan: Hospital Pirovanotareas De Demolicion De Chimenea</b><br/>Monto: $2000000 | Licitada a Mejoramiento Hospitalario S.A. (CUIT 30707962654) | Finalizada el 22/02/2017", -34.5651057769818, -58.4709864414289],
+["<b>672 - Obras Comuna 10: Modificacion Layout Sede Comunal 10</b><br/>Monto: $1477190 | Licitada a Prisma Constructora S.R.L (CUIT 30714290173) | Finalizada el 30/01/2017", -34.6228455414421, -58.5198922269284],
+["<b>698 - Barrio Los Piletones: Mejoras En Frentes - Barrio Los Piletones - Etapa 1</b><br/>Monto: $1460667 | Licitada a Cooperativa (CUIT ?) | Finalizada el 02/06/2017", -34.685354, -58.470667],
+["<b>699 - Ch Nestor Kirchner: Reconstruccion De Veredas En El Conjunto Habitacional Nestor Kirchner</b><br/>Monto: $1273708 | Licitada a Dr2 Construcciones S.R.L. (CUIT 30714286605) | Finalizada el 09/07/2017", -34.6784114912645, -58.4526489760856],
+["<b>722 - Ecoparque: Elefantes 1er Etapa</b><br/>Monto: $2106085 | Licitada a Gwerder & Co S.R.L (CUIT 30707471944) | Finalizada el 25/02/2017", -34.5783194456225, -58.4148211012661],
+["<b>727 - Obras Comuna 3: Base Operativa 24 De Noviembre</b><br/>Monto: $2847482 | Licitada a Grupo Viarsa S.A (CUIT 30714207667) | Finalizada el 23/06/2017", -34.6263017843734, -58.4102129282026],
+["<b>728 - Obras Comuna 9: Base Operativa Bilbao</b><br/>Monto: $2904871 | Licitada a Verde Integral S.A. (CUIT 30714263842) | Finalizada el 04/05/2017", -34.6452258940329, -58.4749614449059],
+["<b>729 - Obras Comuna 8: Base Operativa Indoamericano Etapa 1</b><br/>Monto: $3586854 | Licitada a Verde Integral S.A. (CUIT 30714263842) | Finalizada el 29/04/2017", -34.6579925217723, -58.4586095613628],
+["<b>730 - Obras Comuna 11: Boulevard Juan B. Justo \Recuperacion Y Puesta En Valor</b><br/>Monto: $6292554 | Licitada a Nazareno Pablo Puente (CUIT 20248211114) | Finalizada el 30/04/2017", -34.6108677290612, -58.4672688515057],
+["<b>732 - Obras Comuna 5: Pasaje Panama Calle Sustentable</b><br/>Monto: $5725064 | Licitada a Vivero Cuculo S.R.L (CUIT 30650273652) | Finalizada el 07/06/2017", -34.6038562968568, -58.4312422145584],
+["<b>734 - Obras Comuna 8: Sede Comunal 8 Modificacion Del Layout De Puestos De Trabajo</b><br/>Monto: $3107789 | Licitada a Vap Construcciones S.R.L. (CUIT 30714522384) | Finalizada el 24/04/2017", -34.6847043827209, -58.4553385845032],
+["<b>741 - Obras Comuna 8: Plazoleta Prefectura Naval Argentina</b><br/>Monto: $2450010 | Licitada a Kavos S.A. (CUIT 33707144829) | Finalizada el 20/04/2017", -34.6853536449884, -58.4706666904866],
+["<b>743 - Obras Comuna 5: Sede Comuna 5 Muro Y Azotea Verde</b><br/>Monto: $1452016 | Licitada a Vivero Cuculo S.R.L (CUIT 30650273652) | Finalizada el 12/03/2017", -34.623047223679, -58.4126608102446],
+["<b>744 - Obras Comuna 4: Subsede Comuna 4 Muro Verde Y Cambio Layout</b><br/>Monto: $1716682 | Licitada a Vivero Cuculo S.R.L (CUIT 30650273652) | Finalizada el 11/04/2017", -34.6415496678178, -58.3787779112892],
+["<b>748 - Barrio 31: Cancha 9</b><br/>Monto: $ | Licitada a Cooperativa (CUIT ?) | Finalizada el 04/07/2017", -34.5837186206628, -58.3742009654466],
+["<b>750 - Barrio 31: Calle Manzana 104 Y 12</b><br/>Monto: $19998005 | Licitada a Kopar S.A (CUIT 30707504990) | Finalizada el 20/02/2017", -34.5834858837596, -58.3746390360562],
+["<b>751 - Barrio 31: Calle Avellaneda</b><br/>Monto: $19932136 | Licitada a Pose (CUIT 30709107123) | Finalizada el 15/03/2017", -34.5835958937482, -58.3745356226373],
+["<b>752 - Obras En Hospitales De Flores: Hospital Alvarez - Proyecto, Construccion Y Montaje De Red De Media Presion Y Sub Estaciones 6, 7 Y 8 - Gas</b><br/>Monto: $7048897 | Licitada a Cooperativa De Trabajo La unica Ltda. (CUIT 30710261012) | Finalizada el 19/01/2017", -34.6242921617282, -58.4694218408327],
+["<b>753 - Obras En Hospitales De Flores: Hospital Alvarez - Instalacion De Sistema De Climatizacion De Aire – Departamento Materno Infantil</b><br/>Monto: $2368032 | Licitada a Ecohm S.R.L. (CUIT 30712548114) | Finalizada el 16/01/2017", -34.6242921617282, -58.4694218408327],
+["<b>754 - Obras En Hospitales De Caballito: Hospital Durand - Reformulacion Gases Medicos Uti Pediatrica 8 Puestos</b><br/>Monto: $5175000 | Licitada a Mantelectric I.C.I.S.A., Riva S.A.I.I.C.F.A. Ute (CUIT 30711854386) | Finalizada el 19/04/2017", -34.6088715380348, -58.4378883759306],
+["<b>755 - Obras En Hospitales De Coghlan: Hospital Pirovano - Readecuacion Local De Inflamables</b><br/>Monto: $924967 | Licitada a Mejoramiento Hospitalario S.A. (CUIT 30707962654) | Finalizada el 28/03/2017", -34.5651057769818, -58.4709864414289],
+["<b>756 - Obras En Hospitales De Caballito: Hospital Quemados - Puesta En Valor Y Refuncionalizacion Del Sector De Morgue</b><br/>Monto: $2828072 | Licitada a Mejoramiento Hospitalario S.A. (CUIT 30707962654) | Finalizada el 21/04/2017", -34.6255732393873, -58.4322263712929],
+["<b>757 - Obras En Hospitales De Villa Devoto: Hospital Zubizarreta - Remodelacion Guardia</b><br/>Monto: $4900460 | Licitada a Sehos S.A. (CUIT 30649820704) | Finalizada el 20/09/2017", -34.5999046597321, -58.5112049294097],
+["<b>760 - Obras Comuna 7: Eva Peron 2da Etapa</b><br/>Monto: $1851143 | Licitada a Vivero Cuculo S.R.L (CUIT 30650273652) | Finalizada el 26/05/2017", -34.6429173972962, -58.4607161017668],
+["<b>766 - Obras Comuna 3: Lateral Autopista 25 De Mayo</b><br/>Monto: $1248000 | Licitada a Vector Construcciones S.R.L. (CUIT 30593093251) | Finalizada el 15/04/2017", -34.6238065885204, -58.3936414778362],
+["<b>768 - Obras Comuna 7: Plaza Discepolo</b><br/>Monto: $2154964 | Licitada a Uribe Gerardo Javier (CUIT 20221477651) | Finalizada el 20/05/2017", -34.6401941921097, -58.4234950401976],
+["<b>770 - Obras Comuna 13: La Redonda, Iglesia De Belgrano</b><br/>Monto: $7112537 | Licitada a E. Caramian Sacicifya (CUIT 30517653183) | Finalizada el 30/04/2017", -34.5619124326192, -58.4553366310992],
+["<b>772 - Obras Comuna 3: Plaza 1ro De Mayo</b><br/>Monto: $6392935 | Licitada a Constructora Solana S.A (CUIT 30714318337) | Finalizada el 29/04/2017", -34.6118684724192, -58.3974416937653],
+["<b>773 - Obras Comuna 13: Plaza General Ramirez Etapa 2</b><br/>Monto: $6987575 | Licitada a Dagresa Vial Construcciones S.R.L (CUIT 33712269079) | Finalizada el 10/04/2017", -34.5531592301748, -58.4689593390728],
+["<b>775 - Barrio Las Palomas: Mejoras En Frentes – Las Palomas</b><br/>Monto: $1485973 | Licitada a Cooperativa (CUIT ?) | Finalizada el 01/07/2017", -34.6563179459629, -58.4511464349264],
+["<b>775 - Barrio Las Palomas: Mejoras En Frentes Etapa 2º - Conjunto Las Palomas</b><br/>Monto: $792212 | Licitada a Cooperativa (CUIT ?) | Finalizada el 30/09/2017", -34.6563179459629, -58.4511464349264],
+["<b>776 - Barrio 26 De Junio: Mejoras En Frentes - 33 Viviendas</b><br/>Monto: $1093413 | Licitada a Cooperativa (CUIT ?) | Finalizada el 16/06/2017", -34.6559946277464, -58.4506977531921],
+["<b>799 - Ecoparque: Quirofano (Obra)</b><br/>Monto: $1109724 | Licitada a Tecno Sistemas S.R.L (CUIT 30658639745) | Finalizada el 16/11/2017", -34.5783194456225, -58.4148211012661],
+["<b>808 - Obras En Hospitales De Parque Patricios: Hospital Penna - Infraestructura Y Seguridad - 1ro Etapa</b><br/>Monto: $593236 | Licitada a Indaltec S.A. (CUIT 30650988600) | Finalizada el 24/01/2017", -34.6430517547785, -58.4114123648285],
+["<b>991 - Ecoparque: Isla Condor - Modificaciones En Recinto</b><br/>Monto: $583820 | Licitada a Punto H S.A (CUIT 33714586799) | Finalizada el 26/12/2017", -34.5783194456225, -58.4148211012661],
+["<b>1003 - Villa 1 11 14: Cloacas En Cancha Paraguayo</b><br/>Monto: $1000000 | Licitada a Cooperativa (CUIT ?) | Finalizada el 05/09/2017", -34.6638731084, -58.4692380846],
+["<b>1018 - Obras Comuna 14: Patios De Juegos - Rafael Del Riego Y Nunez</b><br/>Monto: $1458602 | Licitada a Vap Construcciones S.R.L. (CUIT 30714522384) | Finalizada el 31/10/2017", -34.5678130881236, -58.4461071595584],
+["<b>1029 - Distrito De Las Artes: Puesta En Valor Calle Pedro De Mendoza Entre Brasil Y Aristobulo Del Valle</b><br/>Monto: $13912013 | Licitada a Bosquimano S.A (CUIT 30711470022) | Finalizada el 26/01/2017", -34.627020134189, -58.3584731603382],
+["<b>1034 - Barrio Los Piletones: Ejecucion De Calle De Enlace Entre El Complejo Habitacional Los Piletones Y Av. Asturias</b><br/>Monto: $ | Licitada a Maquivial S.A.I (CUIT 30548939689) | Finalizada el 23/01/2017", -34.6658056828906, -58.4563658325245],
+["<b>1035 - Barrio Los Piletones: Obras Complementarias De Infraestructura Y Puesta En Regimen En Barrio Piletones Y Barrio Ramon Carrillo</b><br/>Monto: $3268701 | Licitada a C&E Construcciones S.A. (CUIT 30708288361) | Finalizada el 26/02/2017", -34.6636229912584, -58.4516093724043],
+["<b>1036 - Obras Comuna 8: Remodelacion De Viviendas Incendiadas En El Conjunto Habitacional 180 Viviendas Sito En Av. Fernandez De La Cruz Y Av. Lacarra</b><br/>Monto: $1016896 | Licitada a Cooperativa (CUIT ?) | Finalizada el 19/02/2017", -34.6649216943656, -58.4499589424482],
+["<b>1045 - Ctc: Construccion De Un Acceso Provisorio Al Centro De Transferencia De Cargas-Traza Parcial Futura Rama 8-Elaboracion De Proyecto Ejecutivo Y Pavimentacion</b><br/>Monto: $3993192 | Licitada a Maquivial S.A.I (CUIT 30548939689) | Finalizada el 11/03/2017", -34.6729074082641, -58.4354007125067],
+["<b>1047 - Barrio Los Piletones: Adecuacion Y Refaccion Edilicia De Incubadora De Empresas De Base Social - Barrio Los Piletones</b><br/>Monto: $3808672 | Licitada a Building Co S.R.L (CUIT 30708969881) | Finalizada el 18/03/2017", -34.6636229912584, -58.4516093724043],
+["<b>1048 - Autodromo Oscar Y Alfredo Galvez: Nuevo Vallado Circuito 12 - Obra Civil - Autodromo De La Ciudad D Buenos Aires</b><br/>Monto: $11468882 | Licitada a Arco S.R.L (CUIT 30657249765) | Finalizada el 25/03/2017", -34.6980018162953, -58.4698263017463],
+["<b>1049 - Barrio Los Piletones: Pavimentacion Con Concreto Asfaltico De Calle Vehicular Continuacion Calle Plumerillo - Bro Los Piletones</b><br/>Monto: $2715512 | Licitada a Maquivial S.A.I (CUIT 30548939689) | Finalizada el 04/03/2017", -34.6658056828906, -58.4563658325245],
+["<b>1050 - Distrito De Las Artes: Adaptacion De Predio Para Traslado De Transformadores - Plaza Usina Del Arte</b><br/>Monto: $254512 | Licitada a Oznerol S.A. (CUIT 30714746371) | Finalizada el 28/04/2017", -34.6550909106049, -58.3729094949021],
+["<b>1051 - Distrito Del Deporte: Construccion De Muro Perimetral - Asociacion Civil Nueva Estrella</b><br/>Monto: $1600495 | Licitada a A.E. Ponce Ingenieria S.A. (CUIT 30714763098) | Finalizada el 08/05/2017", -34.6632016065609, -58.4742975527764],
+["<b>1052 - Obras Comuna 4: Recambio De Cubierta En Quincho Darling Tennis Club</b><br/>Monto: $1299141 | Licitada a Cylp S.A (CUIT 30567789000) | Finalizada el 02/07/2017", -34.6251269999797, -58.3636796080405],
+["<b>1055 - Buenos Aires Playa 2017: Parque Indoamericano - Mantenimiento</b><br/>Monto: $375210 | Licitada a Cooperativa (CUIT ?) | Finalizada el 27/02/2017", -34.6649856055208, -58.4693891150288],
+["<b>1058 - Barrio 26 De Junio: Rejas Perimetrales Centro Parroquial - Barrio 33 Viviendas</b><br/>Monto: $755445 | Licitada a Cooperativa (CUIT ?) | Finalizada el 18/03/2017", -34.6559946277464, -58.4506977531921],
+["<b>1070 - Barrio Los Piletones: Saneamiento Y Relleno Pileton - Barrio Los Piletones</b><br/>Monto: $937131 | Licitada a Cooperativa (CUIT ?) | Finalizada el 05/05/2017", -34.6984349949, -58.4706449041],
+["<b>1071 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Intervencion Platea B</b><br/>Monto: $3086742 | Licitada a Kavos S.A. (CUIT 33707144829) | Finalizada el 08/10/2017", -34.6980018162953, -58.4698263017463],
+["<b>1072 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Intervencion Escaleras</b><br/>Monto: $1528495 | Licitada a Piedra Roble S.A (CUIT 30715288318) | Finalizada el 24/08/2017", -34.6980018162953, -58.4698263017463],
+["<b>1073 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Intervencion Palco A</b><br/>Monto: $1283329 | Licitada a Arco S.R.L (CUIT 30657249765) | Finalizada el 15/07/2017", -34.6980018162953, -58.4698263017463],
+["<b>1074 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Intervencion Tribunas De 1 A 4</b><br/>Monto: $4614679 | Licitada a Arco S.R.L (CUIT 30657249765) | Finalizada el 18/08/2017", -34.6980018162953, -58.4698263017463],
+["<b>1075 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Intervencion Tribunas De 5 A 9</b><br/>Monto: $4998364 | Licitada a Arco S.R.L (CUIT 30657249765) | Finalizada el 30/08/2017", -34.6980018162953, -58.4698263017463],
+["<b>1076 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Intervencion Tribunas De 10 A 15</b><br/>Monto: $4557686 | Licitada a Mel Contrucciones S.R.L (CUIT 33714510679) | Finalizada el 05/09/2017", -34.6980018162953, -58.4698263017463],
+["<b>1077 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Intervencion Platea A</b><br/>Monto: $4093977 | Licitada a Faco S.A (CUIT 30604018877) | Finalizada el 27/07/2017", -34.6980018162953, -58.4698263017463],
+["<b>1078 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Intervencion Sanitarios</b><br/>Monto: $1875949 | Licitada a A.E. Ponce Ingenieria S.A. (CUIT 30714763098) | Finalizada el 21/11/2017", -34.6980018162953, -58.4698263017463],
+["<b>1079 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Intervencion Palco B</b><br/>Monto: $1283329 | Licitada a Arco S.R.L (CUIT 30657249765) | Finalizada el 15/07/2017", -34.6980018162953, -58.4698263017463],
+["<b>1080 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Estructura Para Lonas En Escaleras</b><br/>Monto: $2615466 | Licitada a Piedra Roble S.A (CUIT 30715288318) | Finalizada el 29/08/2017", -34.6980018162953, -58.4698263017463],
+["<b>1081 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Cama De Hormigon Triturado – Circuito Nº 12 – Obra Civil</b><br/>Monto: $7346340 | Licitada a Arco S.R.L (CUIT 30657249765) | Finalizada el 15/07/2017", -34.6980018162953, -58.4698263017463],
+["<b>1082 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Intervencion Acceso</b><br/>Monto: $1649652 | Licitada a Isofil S.A.I.Y C. (CUIT 30552340090) | Finalizada el 08/10/2017", -34.6980018162953, -58.4698263017463],
+["<b>1083 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Intervencion Tanque De Agua</b><br/>Monto: $994435 | Licitada a Arco S.R.L (CUIT 30657249765) | Finalizada el 07/11/2017", -34.6980018162953, -58.4698263017463],
+["<b>1084 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Intervencion Plaza De Honor</b><br/>Monto: $3578479 | Licitada a Mel Contrucciones S.R.L (CUIT 33714510679) | Finalizada el 08/11/2017", -34.6980018162953, -58.4698263017463],
+["<b>1085 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Intervencion Muro Perimetral</b><br/>Monto: $3659055 | Licitada a Garrido Marcelo Pablo (CUIT 20182721094) | Finalizada el 08/06/2017", -34.6980018162953, -58.4698263017463],
+["<b>1086 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Intervencion Tunel Peatonal</b><br/>Monto: $931469 | Licitada a Neltec S.R.L. (CUIT 30707902341) | Finalizada el 07/11/2017", -34.6980018162953, -58.4698263017463],
+["<b>1087 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Estructura Sobre Barandas En Plateas</b><br/>Monto: $227617 | Licitada a Mel Contrucciones S.R.L (CUIT 33714510679) | Finalizada el 27/07/2017", -34.6980018162953, -58.4698263017463],
+["<b>1088 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Intervencion Tribuna Central</b><br/>Monto: $1782915 | Licitada a Cylp S. A (CUIT 30567789000) | Finalizada el 08/11/2017", -34.6980018162953, -58.4698263017463],
+["<b>1089 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Intervencion Horquilla</b><br/>Monto: $2272672 | Licitada a Oznerol S.A. (CUIT 30714746371) | Finalizada el 20/08/2017", -34.6980018162953, -58.4698263017463],
+["<b>1090 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Provision E Instalacion De Butacas En Platea A</b><br/>Monto: $840030 | Licitada a Diseno Y Equipamientos S.R.L. (CUIT 30708288353) | Finalizada el 07/01/2017", -34.6980018162953, -58.4698263017463],
+["<b>1090 - Bajo Autopista: Recuperacion Y Renovacion De Accesos En Av. General Paz</b><br/>Monto: $18900000 | Licitada a Naku Construcciones S.R.L. (CUIT 30575292174) | Finalizada el 07/01/2017", -34.6980018162953, -58.4698263017463],
+["<b>1091 - Entorno La Boca: Centro Comercial A Cielo Abierto Av. Almirante Brown (E/ Av. Pedro De Mendoza Y Av. Martin Garcia)</b><br/>Monto: $32955400 | Licitada a Dynco S.A (CUIT 30708802812) | Finalizada el 01/12/2017", -34.6980018162953, -58.4698263017463],
+["<b>1099 - Eje Civico: Renovacion Av. De Mayo + Entorno Plazas + Virrey Cevallos</b><br/>Monto: $29998890 | Licitada a Altote S.A. (CUIT 30707431896) | Finalizada el 01/09/2017", -34.60614781, -58.40585006],
+["<b>1100 - Caniles: Aristobulo Del Valle</b><br/>Monto: $ | Licitada a ? (CUIT ?) | Finalizada el 15/04/2017", -34.6051750777364, -58.4923153054221],
+["<b>1101 - Caniles: Mujica</b><br/>Monto: $ | Licitada a ? (CUIT ?) | Finalizada el 13/04/2017", -34.5636633352396, -58.5034332329601],
+["<b>1102 - Caniles: Parque De Las Victorias</b><br/>Monto: $ | Licitada a ? (CUIT ?) | Finalizada el 04/11/2017", -34.6757833985442, -58.4619630355201],
+["<b>1176 - Acumar: San Antonio</b><br/>Monto: $84025000 | Licitada a Vidogar Construcciones S.A. (CUIT 30553433564) | Finalizada el 11/01/2017", -34.6507366101858, -58.3776680601297],
+["<b>1177 - Acumar: Lacarra</b><br/>Monto: $49565419 | Licitada a Lanusse (CUIT 30577764537) | Finalizada el 01/11/2017", -34.6539719047985, -58.4640277970676],
+["<b>1178 - Acumar: Osvaldo Cruz</b><br/>Monto: $153208672 | Licitada a Bricons S.A.I.C.F.I. (CUIT 30541068151) | Finalizada el 07/01/2017", -34.6559078345094, -58.3947043355792],
+["<b>1195 - Plan 30 Creacion: Jardin De Infantes Integral Nro 9</b><br/>Monto: $6339454 | Licitada a Co.Se.Ba S.A. (CUIT 30678613033) | Finalizada el 30/03/2017", -34.6837925306282, -58.4664197684055],
+["<b>1197 - Plan 30 Creacion: Escuela Infantil Nro 07</b><br/>Monto: $6499921 | Licitada a Teximco S.A. (CUIT 30640087257) | Finalizada el 30/06/2017", -34.6326245706473, -58.3623601711797],
+["<b>1198 - Plan 30 Creacion: Jardin De Infantes Integral Nro 14</b><br/>Monto: $5006510 | Licitada a Pablo Gustavo Aparo (CUIT 20183895630) | Finalizada el 30/04/2017", -34.6402246871334, -58.3956508068744],
+["<b>1199 - Plan 30 Creacion: Jardin De Infantes Integral Nro 13</b><br/>Monto: $2457851 | Licitada a Dilthey S.A. (CUIT 30711331847) | Finalizada el 30/03/2017", -34.6472542942023, -58.4492064239884],
+["<b>1241 - Obras Generales: Esc. Primaria Comun Nro 09 Benito Juarez</b><br/>Monto: $2736733 | Licitada a Spinelli & Asociados S.R.L. (CUIT 30709411876) | Finalizada el 10/08/2017", -34.6144430683053, -58.5098589775719],
+["<b>1242 - Obra Infraestructura: Esc. De Educ. Espec. Y Form. Laboral Nro 28 Prof. Bartolome Ayrolo</b><br/>Monto: $26452092 | Licitada a Teximco S.A. (CUIT 30640087257) | Finalizada el 09/03/2017", -34.598905143366, -58.5158478824169],
+["<b>1244 - Mejora Edilicia: Esc. Primaria Comun Nro 10 Juan Andres De La Pena</b><br/>Monto: $2226402 | Licitada a Co.Se.Ba S.A. (CUIT 30678613033) | Finalizada el 31/07/2017", -34.6456955833975, -58.4237372521795],
+["<b>1246 - Mejora Edilicia: Esc. Primaria Comun Nro 08 Dr. Dalmacio Velez Sarsfield</b><br/>Monto: $3318737 | Licitada a Co.Se.Ba S.A. (CUIT 30678613033) | Finalizada el 09/09/2017", -34.6422897837215, -58.5122995210167],
+["<b>1248 - Obras Generales: Esc. Tecnica Nro 30 Dr. Norberto Pinero</b><br/>Monto: $8007198 | Licitada a Kion S.A.I.C. (CUIT 33522512279) | Finalizada el 07/12/2017", -34.5988474752406, -58.4190398221327],
+["<b>1252 - Obras Generales: Inst. De Ensenanza Superior En Lenguas Vivas Juan B. Justo (Sede) Primario</b><br/>Monto: $6380743 | Licitada a Garbin S.A. (CUIT 30521147373) | Finalizada el 31/12/2017", -34.6130131776793, -58.4960364058149],
+["<b>1253 - Obra Infraestructura: Esc. De Bellas Artes Lola Mora</b><br/>Monto: $11919911 | Licitada a Ibasa S.A. (CUIT 30696429886) | Finalizada el 31/08/2017", -34.6850774760751, -58.4643506708109],
+["<b>1254 - Obras Generales: Esc. Primaria Comun Nro 08 Luis Federico Leloir</b><br/>Monto: $7244094 | Licitada a Bonaldi S.R.L. (CUIT 30707443614) | Finalizada el 31/12/2017", -34.6595881039226, -58.4289354237404],
+["<b>1255 - Mejora Edilicia: Esc. Primaria Comun Nro 04 Provincia De Cordoba</b><br/>Monto: $2577752 | Licitada a Ibasa S.A. (CUIT 30696429886) | Finalizada el 12/04/2017", -34.5926277595123, -58.4277142500367],
+["<b>1258 - Mejora Edilicia: Esc. De Recuperacion Nro 06</b><br/>Monto: $126511 | Licitada a Ses S.A. - Mig S.A. (CUIT 30-71226425-6) | Finalizada el 30/10/2017", -34.6583284073682, -58.4442561706669],
+["<b>1260 - Obras Generales: Esc. Tecnica Nro 12 Libertador Gral. Jose De San Martin</b><br/>Monto: $14505000 | Licitada a Hexacom S.A. (CUIT 30643202812) | Finalizada el 31/12/2017", -34.5918213883077, -58.3771046665944],
+["<b>1263 - Obra Infraestructura: Escuela Integral Interdisciplinaria Nº 20 Alicia Moreau De Justo</b><br/>Monto: $3183752 | Licitada a Vidogar Construcciones S.A. (CUIT 30553433564) | Finalizada el 09/02/2017", -34.679861165153, -58.4936016687733],
+["<b>1265 - Obras Generales: Esc. Normal Superior Nro 05 Gral. Don Martin Miguel De Güemes</b><br/>Monto: $6603217 | Licitada a Cia. Central De Construcciones S.R.L. (CUIT 30708008393) | Finalizada el 24/08/2017", -34.6420996034575, -58.3805068770351],
+["<b>1266 - Obra Infraestructura: Liceo Nro 05 Pascual Guaglianone / Esc. Tecnica Nro 18 Jose Antonio alvarez Condarco</b><br/>Monto: $1753837 | Licitada a Enci S.A. (CUIT 30709309354) | Finalizada el 17/09/2017", -34.630159103219, -58.4549281276333],
+["<b>1267 - Obras Generales: Liceo Nro 05 Pascual Guaglianone / Esc. Tecnica Nro 18 Jose Antonio alvarez Condarco</b><br/>Monto: $17492905 | Licitada a Enci S.A. (CUIT 30709309354) | Finalizada el 17/09/2017", -34.630159103219, -58.4549281276333],
+["<b>1268 - Escuela De Reemplazo: Esc. De Danzas Nro 02 Jorge Donn</b><br/>Monto: $11612519 | Licitada a Garbin S.A. (CUIT 30521147373) | Finalizada el 01/12/2017", -34.6306185879595, -58.5031768439808],
+["<b>1270 - Obras Generales: Polo Mugica - Esc. De Educacion Media Nro 01</b><br/>Monto: $1641553 | Licitada a Fortis S.R.L. (CUIT 30714765430) | Finalizada el 30/11/2017", -34.5892137594234, -58.3710152463657],
+["<b>1278 - Obras Generales: Esc. Primaria Comun Nro 08 Alte. Manuel Blanco Encalada / Jardin De Infantes Nucleado E Juana Manso</b><br/>Monto: $4246602 | Licitada a Betonhaus S.A. (CUIT 30708568240) | Finalizada el 15/08/2017", -34.6011628530318, -58.5033064344201],
+["<b>1281 - Obras Generales: Esc. Primaria Comun Nro 01 Casto Munita</b><br/>Monto: $7030271 | Licitada a Coypro S.A. (CUIT 30615108290) | Finalizada el 09/06/2017", -34.5615568025467, -58.4541426258632],
+["<b>1285 - Obra Infraestructura: Esc. Tecnica Nro 07 Dolores Lavalle De Lavalle</b><br/>Monto: $1338602 | Licitada a Las Cortes S.R.L. (CUIT 30700041197) | Finalizada el 09/10/2017", -34.6397603747154, -58.4030689020856],
+["<b>1286 - Obra Infraestructura: Esc. Primaria Comun Nro 07 Ninas De Ayohuma / Jardin De Infantes Comun Nro 05</b><br/>Monto: $525150 | Licitada a Spinelli & Asociados S.R.L. (CUIT 30709411876) | Finalizada el 01/09/2017", -34.6358988848162, -58.4420551222949],
+["<b>1288 - Mejora Edilicia: Liceo Nro 08 Esteban Echeverria</b><br/>Monto: $1757811 | Licitada a Mediterraneo S.A (CUIT 30566480618) | Finalizada el 15/12/2017", -34.6532098102157, -58.505185502671],
+["<b>1298 - Mejora Edilicia: Esc. Primaria Comun Nro 11 Jose Federico Moreno</b><br/>Monto: $1390972 | Licitada a Dal Construcciones S.A. (CUIT 30604370171) | Finalizada el 20/10/2017", -34.6236315929891, -58.4100725697741],
+["<b>1300 - Mejora Edilicia: Esc. De Educ. Espec. Nro 33 Santa Cecilia</b><br/>Monto: $695486 | Licitada a Dal Construcciones S.A. (CUIT 30604370171) | Finalizada el 20/10/2017", -34.6244105733388, -58.428703627907],
+["<b>1301 - Mejora Edilicia: Esc. Primaria Comun Nro 27 Dean Funes</b><br/>Monto: $2999056 | Licitada a Incapcon S.A. (CUIT ?) | Finalizada el 21/08/2017", -34.6246292452422, -58.3712011922094],
+["<b>1303 - Mejora Edilicia: Esc. Primaria Comun Nro 01 Alte. Guillermo Brown</b><br/>Monto: $2324381 | Licitada a Radiotronica Construcciones S.A. (CUIT 33709466939) | Finalizada el 01/08/2017", -34.6332005602309, -58.36133469195],
+["<b>1304 - Mejora Edilicia: Esc. Primaria Comun Nro 23 Canada</b><br/>Monto: $1106680 | Licitada a Radiotronica Construcciones S.A. (CUIT 33709466939) | Finalizada el 01/08/2017", -34.6391247174242, -58.4358515069158],
+["<b>1305 - Mejora Edilicia: Esc. De Educ. Espec. Nro 05 Dr. angel Ardaiz</b><br/>Monto: $2708684 | Licitada a Radiotronica Construcciones S.A. (CUIT 33709466939) | Finalizada el 10/03/2017", -34.6597437749272, -58.4235033169073],
+["<b>1307 - Mejora Edilicia: Esc. Primaria Comun Nro 07 Aeronautica Argentina (Sede)</b><br/>Monto: $3281376 | Licitada a Radiotronica Construcciones S.A. (CUIT 33709466939) | Finalizada el 01/08/2017", -34.644802491622, -58.4174367760802],
+["<b>1308 - Mejora Edilicia: Esc. Primaria Comun Nro 13 Leopoldo Marechal</b><br/>Monto: $178799 | Licitada a Ibasa S.A. (CUIT 30696429886) | Finalizada el 31/08/2017", -34.6116530974261, -58.4630566671459],
+["<b>1309 - Obra Infraestructura: Esc. Tecnica Nro 08 Paula Albarracin De Sarmiento</b><br/>Monto: $1629592 | Licitada a Coypro S.A. (CUIT 30615108290) | Finalizada el 10/08/2017", -34.6404874186462, -58.4835468420943],
+["<b>1311 - Obra Infraestructura: Polideportivo</b><br/>Monto: $2951151 | Licitada a Construmod S.A. (CUIT 30711684391) | Finalizada el 31/07/2017", -34.6689540811719, -58.4543227858242],
+["<b>1312 - Obra Infraestructura: Esc. Primaria Comun Nro 09 Hector Panizza</b><br/>Monto: $1484859 | Licitada a Di Pietro S.A (CUIT 20044899532) | Finalizada el 09/01/2017", -34.6882978501953, -58.4631264577975],
+["<b>1314 - Obras Generales: Esc. Tecnica Nro 01 Ing. Otto Krause</b><br/>Monto: $2979477 | Licitada a Mediterraneo S.A (CUIT 30566480618) | Finalizada el 15/12/2017", -34.6152457465869, -58.3688198552463],
+["<b>1317 - Mejora Edilicia: Esc. Primaria Comun Nro 09 Jose Maria Paz</b><br/>Monto: $30144882 | Licitada a Co.Se.Ba S.A. (CUIT 30678613033) | Finalizada el 24/10/2017", -34.6323954504311, -58.469615164073],
+["<b>1318 - Mejora Edilicia: Esc. De Comercio Nro 30 Dr. Esteban Agustin Gascon</b><br/>Monto: $1582695 | Licitada a Co.Se.Ba S.A. (CUIT 30678613033) | Finalizada el 24/10/2017", -34.6305912908488, -58.5088896310816],
+["<b>1319 - Mejora Edilicia: Esc. Primaria Comun Nro 05 Vicente Lopez Y Planes</b><br/>Monto: $2198571 | Licitada a Co.Se.Ba S.A. (CUIT 30678613033) | Finalizada el 24/10/2017", -34.6624860710616, -58.5029762151935],
+["<b>1320 - Obra Infraestructura: Esc. Primaria Comun Nro 08 Dr. Arturo Mateo Bas</b><br/>Monto: $2583611 | Licitada a Radiotronica Construcciones S.A. (CUIT 33709466939) | Finalizada el 15/08/2017", -34.6003247227696, -58.4116158558623],
+["<b>1323 - Obra Infraestructura: Casa Amarilla Modular</b><br/>Monto: $574615 | Licitada a Teximco S.A. (CUIT 30640087257) | Finalizada el 21/09/2017", -34.6326245706473, -58.3623601711797],
+["<b>1324 - Obra Infraestructura: Esc. Primaria Comun Nro 15 Gral. Jose Gervasio De Artigas</b><br/>Monto: $3292976 | Licitada a Betonhaus S.A. (CUIT 30708568240) | Finalizada el 30/09/2017", -34.612839908973, -58.436311589563],
+["<b>1326 - Mejora Edilicia: Esc. Primaria Comun Nro 20 Mariano Sanchez De Loria</b><br/>Monto: $2626095 | Licitada a Las Cortes S.R.L. (CUIT 30700041197) | Finalizada el 16/07/2017", -34.6363483291465, -58.5228708920125],
+["<b>1327 - Mejora Edilicia: Jardin De Infantes Comun Nro 02 Prof. Marina Margarita Ravioli</b><br/>Monto: $2044025 | Licitada a Fortis S.R.L. (CUIT 30714765430) | Finalizada el 16/07/2017", -34.615641337446, -58.4333985847159],
+["<b>1329 - Mejora Edilicia: Esc. Primaria Comun Nro 25 Carmen Sonda De Pandolfini</b><br/>Monto: $2992583 | Licitada a Mazhari S.A. (CUIT 30708896019) | Finalizada el 12/10/2017", -34.6309707664034, -58.5006345717998],
+["<b>1332 - Barrio Rivera Iguazu: Manzana 2 - Construccion De 64 Viviendas</b><br/>Monto: $60912546 | Licitada a Vivian Hnos S.A.C.I.F.I. (CUIT 30504418649) | Finalizada el 01/07/2017", -34.6582007979551, -58.4018387666512],
+["<b>1333 - Barrio Rivera Iguazu: Manzana 5 - Construccion De 64 Viviendas</b><br/>Monto: $60821903 | Licitada a Bricons S.A.I.C.F.I. (CUIT 30541068151) | Finalizada el 01/07/2017", -34.6582007979551, -58.4018387666512],
+["<b>1334 - Barrio Rivera Iguazu: Manzana 6 - Construccion De 64 Viviendas</b><br/>Monto: $58590234 | Licitada a Cunumi S.A. (CUIT 30615748036) | Finalizada el 01/07/2017", -34.6582007979551, -58.4018387666512],
+["<b>1337 - Conservatorios E Institutos Artisticos: Formacion Artistica: Recuperacion Edilicia En Conservatorios E Institutos Artisticos</b><br/>Monto: $739347 | Licitada a Aioc S.R.L. (CUIT 30714577170) | Finalizada el 05/01/2017", -34.5816379294608, -58.4570716366706],
+["<b>1338 - Conservatorios E Institutos Artisticos: Formacion Artistica: Recuperacion Edilicia En Conservatorios E Institutos Artisticos</b><br/>Monto: $547000 | Licitada a C&A Construcciones S.R.L (CUIT 30715347098) | Finalizada el 09/01/2017", -34.6060170351482, -58.4138842204266],
+["<b>1339 - Conservatorios E Institutos Artisticos: Formacion Artistica: Recuperacion Edilicia En Conservatorios E Institutos Artisticos</b><br/>Monto: $450000 | Licitada a Dachcom S.R.L (CUIT 30711557071) | Finalizada el 10/01/2017", -34.6404874186462, -58.4835468420943],
+["<b>5087 - Eje Civico: Puesta En Valor Plaza Del Congreso</b><br/>Monto: $59248641 | Licitada a Urbaser Argentina S.A - Seob S.A. U.T.E. (CUIT 30714682489) | Finalizada el 18/07/2017", -34.6092772488527, -58.3903801521889],
+["<b>5089 - Entorno Constitucion: Puesta En Valor Plaza Centro De Transferencia Constitucion</b><br/>Monto: $23597417 | Licitada a Urbaser Argentina S.A - Seob S.A. U.T.E. (CUIT 30714682489) | Finalizada el 30/03/2017", -34.6277208374515, -58.3809164056175],
+["<b>5092 - Plazas Y Parques: Puesta En Valor Parque Chacabuco</b><br/>Monto: $36640851 | Licitada a Proyectos Y Decisiones S.R.L (CUIT 30707328505) | Finalizada el 28/10/2017", -34.6347609406972, -58.4472982490576],
+["<b>5095 - Plazas Y Parques: Nueva Vereda Parque Avellaneda</b><br/>Monto: $12058570 | Licitada a Urbaser Argentina S.A - Seob S.A. U.T.E. (CUIT 30714682489) | Finalizada el 10/10/2017", -34.6412975520066, -58.4799277249057],
+["<b>5096 - Entorno Palermo: Parque Tres De Febrero: Circuito Aerobico Entorno Golf</b><br/>Monto: $9332604 | Licitada a Proyectos Y Decisiones S.R.L (CUIT 30707328505) | Finalizada el 13/07/2017", -34.5558319232692, -58.4354653596026],
+["<b>5097 - Urbanizacion Barrio 31: Nueva Plaza Av Gendarmeria</b><br/>Monto: $19348537 | Licitada a Algieri S.A (CUIT 30699339810) | Finalizada el 15/07/2017", -34.584207593733, -58.373280574883],
+["<b>5098 - Plazas Y Parques: 9 De Julio - Puesta En Valor Entorno Guardia De Auxilio</b><br/>Monto: $3538475 | Licitada a Urbaser Argentina S.A - Seob S.A. U.T.E. (CUIT 30714682489) | Finalizada el 18/06/2017", -34.6229988442068, -58.37977019176],
+["<b>5099 - Eje Civico: Restauracion Piramide De Mayo</b><br/>Monto: $4095482 | Licitada a Ceprara (CUIT ?) | Finalizada el 19/04/2017", -34.6080334252236, -58.3722218446699],
+["<b>5100 - Plazas Y Parques: Puesta En Valor 9 De Julio Y Av. San Juan (Bajo Puente)</b><br/>Monto: $1200000 | Licitada a Urbaser Argentina S.A - Seob S.A. U.T.E. (CUIT 30714682489) | Finalizada el 10/06/2017", -34.6221452383004, -58.3810012459734],
+["<b>5102 - Plazas Y Parques: Nuevo Parque Elcano</b><br/>Monto: $45157084 | Licitada a Salvatori S.A Parques Y Jardines (CUIT 30512700124) | Finalizada el 02/02/2017", -34.589613, -58.393033],
+["<b>5103 - Plazas Y Parques: Puesta En Valor Plaza Italia</b><br/>Monto: $10143489 | Licitada a Parquizar Ses S.A. - Mantelectric I.C.I.S.A. - Ute (CUIT 30712217487) | Finalizada el 20/04/2017", -34.5812681363372, -58.4208139833559],
+["<b>5104 - Caniles: Mafalda</b><br/>Monto: $3180476 | Licitada a Uribe Gerardo Javier (CUIT 20221477651) | Finalizada el 03/06/2017", -34.5809294236769, -58.445839025182],
+["<b>5105 - Caniles: Aristobulo Del Valle</b><br/>Monto: $3180476 | Licitada a Uribe Gerardo Javier (CUIT 20221477651) | Finalizada el 03/06/2017", -34.6056316598184, -58.4918497035597],
+["<b>5106 - Caniles: Padre Mugica</b><br/>Monto: $3180476 | Licitada a Uribe Gerardo Javier (CUIT 20221477651) | Finalizada el 06/03/2017", -34.5892146847119, -58.3929959575777],
+["<b>5107 - Caniles: Parque De Las Victorias</b><br/>Monto: $3251385 | Licitada a Constructora Solana S.A (CUIT 30714318337) | Finalizada el 31/03/2017", -34.6118684724192, -58.3974416937653],
+["<b>5108 - Caniles: 1ro De Mayo</b><br/>Monto: $3251385 | Licitada a Constructora Solana S.A (CUIT 30714318337) | Finalizada el 31/03/2017", -34.6118684724192, -58.3974416937653],
+["<b>5109 - Caniles: Santojanni</b><br/>Monto: $3251385 | Licitada a Constructora Solana S.A (CUIT 30714318337) | Finalizada el 31/03/2017", -34.6495474288309, -58.5170967971657],
+["<b>5110 - Caniles: Canil Lavalle</b><br/>Monto: $4603543 | Licitada a Algieri S.A (CUIT 30699339810) | Finalizada el 15/06/2017", -34.601931010574, -58.3839565840803],
+["<b>5111 - Plazas De Proximidad: Nueva Plaza De Proximidad: Empedrado</b><br/>Monto: $1421845 | Licitada a Urbaser Argentina S.A - Seob S.A. U.T.E. (CUIT 30714682489) | Finalizada el 25/03/2017", -34.5997765997061, -58.4813909684408],
+["<b>5112 - Plazas Y Parques: Nueva Vereda Parque Rivadavia</b><br/>Monto: $6102826 | Licitada a Casa Machi S.A (CUIT 30608125201) | Finalizada el 22/09/2017", -34.6164118052338, -58.4322140395859],
+["<b>5113 - Plazas Y Parques: Nueva Vereda Parque Los Andes</b><br/>Monto: $9582241 | Licitada a Salvatori S.A Parques Y Jardines (CUIT 30512700124) | Finalizada el 31/07/2017", -34.5916994362674, -58.4476005986726],
+["<b>5114 - Plazas De Proximidad: Nueva Plaza De Proximidad: Albarracin 1470</b><br/>Monto: $2224548 | Licitada a Casa Machi S.A (CUIT 30608125201) | Finalizada el 25/08/2017", -34.6339233534777, -58.4303775055359],
+["<b>5119 - Entorno Palermo: Nueva Vereda Parque Las Heras</b><br/>Monto: $11581546 | Licitada a Salvatori S.A Parques Y Jardines (CUIT 30512700124) | Finalizada el 20/10/2017", -34.5834560867067, -58.4061776318803],
+["<b>5120 - Nueva Vereda Polo Circo</b><br/>Monto: $ | Licitada a ? (CUIT ?) | Finalizada el 18/01/2017", -34.6272578363541, -58.39216512763],
+["<b>5121 - Olimpo</b><br/>Monto: $5846323 | Licitada a Algieri S.A (CUIT 30699339810) | Finalizada el 10/10/2017", -34.6365204224869, -58.4872787298295],
+["<b>5122 - Plazas De Proximidad: Nueva Plaza De Proximidad: Aguaribay 6768</b><br/>Monto: $2764541 | Licitada a Algieri S.A (CUIT 30699339810) | Finalizada el 03/11/2017", -34.6330122902371, -58.5265878711111],
+["<b>5123 - Plazas Y Parques: Puesta En Valor Parque Alberdi</b><br/>Monto: $29748651 | Licitada a Dolcor S.R.L (CUIT 30710137621) | Finalizada el 08/10/2017", -34.6601297708244, -58.5031090331778],
+["<b>5124 - Entorno Palermo: Puesta En Valor Plaza Gould</b><br/>Monto: $30549556 | Licitada a Parquizar Ses S.A. - Mantelectric I.C.I.S.A. - Ute (CUIT 30712217487) | Finalizada el 25/10/2017", -34.570162387957, -58.4107344915211],
+["<b>5125 - Bajo Autopista: Nueva Plaza Bajo Au. Gral Paz Y Av. Juan B Justo</b><br/>Monto: $8549578 | Licitada a Urbaser Argentina S.A - Seob S.A. U.T.E. (CUIT 30714682489) | Finalizada el 15/10/2017", -34.6348110624809, -58.528968391053],
+["<b>5126 - Paseo Lineal Canal 7</b><br/>Monto: $6549517 | Licitada a Salvatori S.A Parques Y Jardines (CUIT 30512700124) | Finalizada el 20/10/2017", -34.581158907054, -58.3968670697704],
+["<b>5129 - Eje Sur: Nueva Plaza Casa Amarilla</b><br/>Monto: $ | Licitada a ? (CUIT ?) | Finalizada el 15/12/2017", -34.6295995599592, -58.3648116419269],
+["<b>13196 - Villa 1 11 14: Cancha Varela Y Frentes Perito Moreno</b><br/>Monto: $5928273 | Licitada a ? (CUIT ?) | Finalizada el 10/08/2017", -34.6511833109875, -58.4433254428866],
+["<b>13198 - Mejora Edilicia: Esc. Primaria Comun Nro 20 Eloy Fernandez Alonso</b><br/>Monto: $508696 | Licitada a Betonhaus S.A. (CUIT 30708568240) | Finalizada el 07/09/2017", -34.6394226121989, -58.422513859948],
+["<b>13199 - Mejora Edilicia: Esc. Primaria Comun Nro 06 Vicente Fidel Lopez</b><br/>Monto: $201654 | Licitada a Betonhaus S.A. (CUIT 30708568240) | Finalizada el 03/06/2017", -34.5767036529426, -58.4308052203613],
+["<b>13200 - Mejora Edilicia: Esc. Primaria Comun Nro 25 Republica De Guatemala</b><br/>Monto: $149556 | Licitada a Betonhaus S.A. (CUIT 30708568240) | Finalizada el 09/07/2017", -34.6176412183768, -58.4545106002206],
+["<b>13202 - Mejora Edilicia: Colegio Nro 08 Julio Argentino Roca</b><br/>Monto: $776730 | Licitada a Co.Se.Ba S.A. (CUIT 30678613033) | Finalizada el 22/04/2017", -34.617520103, -58.3917927335],
+["<b>13203 - Mejora Edilicia: Esc. Primaria Comun Nro 08 Jorge angel Boero</b><br/>Monto: $712437 | Licitada a Co.Se.Ba S.A. (CUIT 30678613033) | Finalizada el 22/04/2017", -34.5757925653217, -58.4800058129925],
+["<b>13205 - Mejora Edilicia: Esc. Primaria Comun Nro 24 C. Y F. Pizarro Y M. Pizarro Y Monje</b><br/>Monto: $516130 | Licitada a Di Pietro S.A (CUIT 20044899532) | Finalizada el 08/06/2017", -34.588075224151, -58.4016746135133],
+["<b>13206 - Mejora Edilicia: Instituto De Formacion Tecnica Superior Nro 24</b><br/>Monto: $145564 | Licitada a Di Pietro S.A (CUIT 20044899532) | Finalizada el 03/10/2017", -34.6175171174895, -58.3917920764372],
+["<b>13207 - Mejora Edilicia: Esc. Primaria Comun Nro 09 Dr. Jose Benjamin Zubiaur</b><br/>Monto: $883167 | Licitada a Di Pietro S.A (CUIT 20044899532) | Finalizada el 16/06/2017", -34.6607962294612, -58.4281488195302],
+["<b>13208 - Mejora Edilicia: Esc. Primaria Comun Nro 11 Ponciano Vivanco</b><br/>Monto: $1176216 | Licitada a Di Pietro S.A (CUIT 20044899532) | Finalizada el 16/06/2017", -34.6648763327568, -58.4895283536376],
+["<b>13209 - Mejora Edilicia: Escuela Infantil Nro 04</b><br/>Monto: $174274 | Licitada a Di Pietro S.A (CUIT 20044899532) | Finalizada el 16/06/2017", -34.6402246317357, -58.4386399258357],
+["<b>13210 - Mejora Edilicia: Esc. Primaria Comun Nro 20 Nieves Escalada De Oromi</b><br/>Monto: $47514 | Licitada a Di Pietro S.A (CUIT 20044899532) | Finalizada el 03/10/2017", -34.6501194583111, -58.3777778136061],
+["<b>13211 - Mejora Edilicia: Esc. Primaria Comun Nro 07 Gral. Güemes</b><br/>Monto: $132465 | Licitada a Di Pietro S.A (CUIT 20044899532) | Finalizada el 10/03/2017", -34.6197922115336, -58.3821905070403],
+["<b>13212 - Mejora Edilicia: Esc. Primaria Comun Nro 18 San Juan Bautista De La Salle</b><br/>Monto: $160446 | Licitada a Di Pietro S.A (CUIT 20044899532) | Finalizada el 16/06/2017", -34.6655019448511, -58.4439158977476],
+["<b>13213 - Mejora Edilicia: Esc Prim Nro 20 Maestro Carlos Alberto Carranza</b><br/>Monto: $688681 | Licitada a Di Pietro S.A (CUIT 20044899532) | Finalizada el 16/06/2017", -34.6622808453052, -58.448704908051],
+["<b>13214 - Mejora Edilicia: Jardin De Infantes Integral Nro 02</b><br/>Monto: $360499 | Licitada a Di Pietro S.A (CUIT 20044899532) | Finalizada el 16/06/2017", -34.620790034884, -58.4133197065579],
+["<b>13215 - Mejora Edilicia: Esc. Primaria Comun Nro 06 Dr. Carlos Vaz Ferreira</b><br/>Monto: $624752 | Licitada a Di Pietro S.A (CUIT 20044899532) | Finalizada el 16/06/2017", -34.6406368962878, -58.4572504102569],
+["<b>13216 - Mejora Edilicia: Esc. Primaria Comun Nro 04 Ricardo Güiraldes</b><br/>Monto: $92787 | Licitada a Di Pietro S.A (CUIT 20044899532) | Finalizada el 16/06/2017", -34.6718012877852, -58.4693812964156],
+["<b>13217 - Mejora Edilicia: Esc. Primaria Comun Nro 07 Juan De Garay</b><br/>Monto: $728807 | Licitada a Dilthey S.A. (CUIT 30711331847) | Finalizada el 27/06/2017", -34.6271194842421, -58.3749688919215],
+["<b>13218 - Mejora Edilicia: Esc. Primaria Comun Nro 06 Luis Pasteur</b><br/>Monto: $532955 | Licitada a Filip S.A. (CUIT 30708268093) | Finalizada el 06/03/2017", -34.5753737536008, -58.4962518775753],
+["<b>13219 - Mejora Edilicia: Esc. Primaria Comun Nro 14 Leopoldo Lugone</b><br/>Monto: $621780 | Licitada a Filip S.A. (CUIT 30708268093) | Finalizada el 03/06/2017", -34.5820148280118, -58.4895664004273],
+["<b>13220 - Mejora Edilicia: Esc. Primaria Comun Nro 06 Delfin Jijena</b><br/>Monto: $444129 | Licitada a Filip S.A. (CUIT 30708268093) | Finalizada el 06/03/2017", -34.6029654387972, -58.446379004171],
+["<b>13221 - Mejora Edilicia: Esc. Primaria Comun Nro 11 Fray Luis Beltran</b><br/>Monto: $710606 | Licitada a Filip S.A. (CUIT 30708268093) | Finalizada el 06/03/2017", -34.5682180736994, -58.4915505140441],
+["<b>13222 - Mejora Edilicia: Esc. Primaria Comun Nro 03 Republica Francesa</b><br/>Monto: $201654 | Licitada a Ibasa S.A. (CUIT 30696429886) | Finalizada el 08/04/2017", -34.6409819480614, -58.5263457243855],
+["<b>13223 - Mejora Edilicia: Esc. Primaria Comun Nro 11 Republica Del Peru</b><br/>Monto: $357597 | Licitada a Ibasa S.A. (CUIT 30696429886) | Finalizada el 31/07/2017", -34.627388151766, -58.48969887813],
+["<b>13224 - Mejora Edilicia: Esc. Primaria Comun Nro 01 Prof. Jose Onaindia</b><br/>Monto: $1787987 | Licitada a Ibasa S.A. (CUIT 30696429886) | Finalizada el 06/03/2017", -34.6400113726379, -58.4998133839964],
+["<b>13225 - Mejora Edilicia: Esc. Primaria Comun Nro 02 Prof. Juan Jose Millan</b><br/>Monto: $1191991 | Licitada a Ibasa S.A. (CUIT 30696429886) | Finalizada el 06/03/2017", -34.5995729345653, -58.4947582859761],
+["<b>13226 - Mejora Edilicia: Esc. Primaria Comun Nro 03 Emilio Gimenez Zapiola</b><br/>Monto: $238398 | Licitada a Ibasa S.A. (CUIT 30696429886) | Finalizada el 15/06/2017", -34.6310759559453, -58.4799021484541],
+["<b>13227 - Mejora Edilicia: Esc. Primaria Comun Nro 04 Cnel. De Marina Tomas Espora</b><br/>Monto: $1495632 | Licitada a Mazhari S.A. (CUIT 30708896019) | Finalizada el 24/06/2017", -34.6293667466343, -58.3893118915423],
+["<b>13228 - Mejora Edilicia: Esc. Primaria Comun Nro 12 Gran Mariscal Del Peru Ramon Castilla</b><br/>Monto: $989750 | Licitada a Mediterraneo S.A (CUIT 30566480618) | Finalizada el 01/08/2017", -34.576539307804, -58.452344950885],
+["<b>13229 - Mejora Edilicia: Esc. Hospitalaria Nro 03 Dr. Pedro De Elizalde</b><br/>Monto: $449321 | Licitada a Radiotronica Construcciones S.A. (CUIT 33709466939) | Finalizada el 01/08/2017", -34.6286945344112, -58.3777426820521],
+["<b>13230 - Mejora Edilicia: Esc. Primaria Comun Nro 03 Juan Maria Gutierrez</b><br/>Monto: $7750834 | Licitada a Radiotronica Construcciones S.A. (CUIT 33709466939) | Finalizada el 11/07/2017", -34.6418282296105, -58.3679516929588],
+["<b>13231 - Mejora Edilicia: Esc. Primaria Comun Nro 15 Arzobispo Mariano Antonio Espinosa</b><br/>Monto: $208937 | Licitada a Radiotronica Construcciones S.A. (CUIT 33709466939) | Finalizada el 01/08/2017", -34.63721990271, -58.3749652280834],
+["<b>13232 - Mejora Edilicia: Esc. De Comercio Nro 09 Jose Ingenieros</b><br/>Monto: $589409 | Licitada a Radiotronica Construcciones S.A. (CUIT 33709466939) | Finalizada el 01/08/2017", -34.6294225639256, -58.4599129106554],
+["<b>13235 - Mejora Edilicia: Esc. Primaria Comun Nro 28 Francisco Pascasio Moreno</b><br/>Monto: $829219 | Licitada a Radiotronica Construcciones S.A. (CUIT 33709466939) | Finalizada el 13/03/2017", -34.6440704735526, -58.3777263052886],
+["<b>13236 - Mejora Edilicia: Esc. Tecnica Nro 04 Republica Del Libano</b><br/>Monto: $688681 | Licitada a Radiotronica Construcciones S.A. (CUIT 33709466939) | Finalizada el 01/08/2017", -34.630199877087, -58.3771381239279],
+["<b>13278 - Obra Infraestructura: Escuela Infantil Nro 05</b><br/>Monto: $304241 | Licitada a Co.Se.Ba S.A. (CUIT 30678613033) | Finalizada el 06/08/2017", -34.6154659391953, -58.5032225982371],
+["<b>13280 - Obras Generales: Esc. Primaria Comun Nro 07 Republica arabe De Egipto</b><br/>Monto: $762905 | Licitada a Lemme Obras Civiles S.R.L (CUIT 30712255249) | Finalizada el 31/01/2017", -34.6376711456572, -58.501875494809],
+["<b>13281 - Obra Infraestructura: Esc. Primaria Comun Nro 10 Ada Maria Elflein</b><br/>Monto: $823125 | Licitada a Enci S.A. (CUIT 30709309354) | Finalizada el 22/04/2017", -34.6310717906899, -58.4989711877694],
+["<b>13282 - Obras Generales: Esc. De Educacion Media Nro 01 E. Reingreso</b><br/>Monto: $901100 | Licitada a Enci S.A. (CUIT 30709309354) | Finalizada el 30/01/2017", -34.6376942994927, -58.52379773624],
+["<b>13285 - Mejora Edilicia: Esc. Tecnica Nro 27 Hipolito Yrigoyen</b><br/>Monto: $1493450 | Licitada a Givaleno Company S.R.L. (CUIT 30715184156) | Finalizada el 20/05/2017", -34.6214629295099, -58.5174579401381],
+["<b>13286 - Obra Infraestructura: Colegio Nro 15 Revolucion De Mayo/Colegio Nro 06 Manuel Belgrano</b><br/>Monto: $1498959 | Licitada a Cia. Central De Construcciones S.R.L. (CUIT 30708008393) | Finalizada el 10/11/2017", -34.5966002210818, -58.4049044957305],
+["<b>13288 - Mejora Edilicia: Esc. De Educacion Media Nro 02</b><br/>Monto: $1644438 | Licitada a Vidogar Construcciones S.A. (CUIT 30553433564) | Finalizada el 26/04/2017", -34.6760836152034, -58.4865204032897],
+["<b>13289 - Obras Generales: Esc. Primaria Comun Nro 18 Republica De Corea</b><br/>Monto: $1724982 | Licitada a Palmieri (CUIT ?) | Finalizada el 23/02/2017", -34.6400244916235, -58.5186227447824],
+["<b>13290 - Obras Generales: Proyecto Remida</b><br/>Monto: $1757009 | Licitada a Enci S.A. (CUIT 30709309354) | Finalizada el 28/02/2017", -34.5647496255415, -58.4191792217993],
+["<b>13291 - Mejora Edilicia: Jardin De Infantes Integral Nro 08 Maria Angela Schiavoni De Lopez</b><br/>Monto: $1814036 | Licitada a Betonhaus S.A. (CUIT 30708568240) | Finalizada el 17/09/2017", -34.6203650162235, -58.416495068886],
+["<b>13293 - Obra Infraestructura: Esc. Primaria Comun Nro 18 Jorge Newbery</b><br/>Monto: $1998000 | Licitada a Varberg S.A. (CUIT 30714509930) | Finalizada el 28/09/2017", -34.6294226988, -58.4865481055],
+["<b>13294 - Mejora Edilicia: Esc. Superior De Comercio Nro 03 Hipolito Vieytes</b><br/>Monto: $2289491 | Licitada a Ecoparques S.A. (CUIT 30712255176) | Finalizada el 18/01/2017", -34.6096846291402, -58.4502598600442],
+["<b>13295 - Obras Generales: Esc. Primaria Comun Nro 17 Tte. Gral. Luis Maria Campos</b><br/>Monto: $2370996 | Licitada a Rualima S.R.L. (CUIT 30682689435) | Finalizada el 24/08/2017", -34.6154120059264, -58.5055805545493],
+["<b>13297 - Obras Generales: Esc. Primaria Comun Nro 23 Republica De Portugal</b><br/>Monto: $2681984 | Licitada a Construmod S.A. (CUIT 30711684391) | Finalizada el 08/03/2017", -34.6294195916924, -58.4865483192566],
+["<b>13298 - Mejora Edilicia: Centes Nro 3</b><br/>Monto: $2781936 | Licitada a Codasa (CUIT 30712275819) | Finalizada el 06/03/2017", -34.5955114321795, -58.5093012692548],
+["<b>13299 - Mejora Edilicia: Esc. Primaria Comun Nro 17 Dr. Juan Balestra</b><br/>Monto: $2873156 | Licitada a Coypro S.A. (CUIT 30615108290) | Finalizada el 06/06/2017", -34.5571587685599, -58.4566817435459],
+["<b>13300 - Mejora Edilicia: Esc. Primaria Comun Nro 04 Cnel. Isidoro Suarez</b><br/>Monto: $2969250 | Licitada a Mediterraneo S.A (CUIT 30566480618) | Finalizada el 01/08/2017", -34.613943602097, -58.3772501473197],
+["<b>13301 - Mejora Edilicia: Esc. Primaria Comun Nro 15 Provincia De Santa Fe</b><br/>Monto: $2991264 | Licitada a Mazhari S.A. (CUIT 30708896019) | Finalizada el 24/06/2017", -34.5415312207124, -58.4768058613829],
+["<b>13302 - Obras Generales: Esc. Primaria Comun Nro 25 Estados Unidos De America</b><br/>Monto: $3499886 | Licitada a Ferrarino (CUIT ?) | Finalizada el 13/03/2017", -34.6284529838791, -58.5228075269557],
+["<b>13303 - Obra Infraestructura: Esc. Primaria Comun Nro 17 Francisco De Vitoria</b><br/>Monto: $4374885 | Licitada a Garbin S.A. (CUIT 30521147373) | Finalizada el 05/11/2017", -34.6018659499575, -58.4381125695215],
+["<b>13305 - Mejora Edilicia: Esc. Primaria Comun Nro 23</b><br/>Monto: $5199700 | Licitada a Dilthey S.A. (CUIT 30711331847) | Finalizada el 30/03/2017", -34.6472542942023, -58.4492064239884],
+["<b>13306 - Obras Generales: Esc. Primaria Comun Nro 08 Base Aerea Vicecomodoro Marambio</b><br/>Monto: $6017102 | Licitada a Majo Construcciones S.A. (CUIT 33709097879) | Finalizada el 31/12/2017", -34.6360233496803, -58.4961577291912],
+["<b>13308 - Obra Infraestructura: Polideportivo Colegio Nro 03 Mariano Moreno</b><br/>Monto: $7614048 | Licitada a Hit Construcciones S.A (CUIT 30709605158) | Finalizada el 31/07/2017", -34.6168210264932, -58.4390665577614],
+["<b>13310 - Obras Generales: Jin A (01/15)</b><br/>Monto: $8948590 | Licitada a Radiotronica Construcciones S.A. (CUIT 33709466939) | Finalizada el 22/11/2017", -34.5714273181708, -58.4899173647232],
+["<b>13311 - Mejora Edilicia: Esc. Primaria Comun Nro 03 Angela M. De Caviglia</b><br/>Monto: $16034567 | Licitada a Cunumi S.A. (CUIT 30615748036) | Finalizada el 25/02/2017", -34.634527096109, -58.4817314490952],
+["<b>19003 - Obras En Hospitales De Balvanera: Hospital Ramos Mejia - Remodelacion Del Sector De Guardia</b><br/>Monto: $2169707 | Licitada a Ses S.A. (CUIT 30647727545) | Finalizada el 10/07/2017", -34.6176205106544, -58.4094003246186],
+["<b>19004 - Obras En Hospitales De Balvanera: Hospital Ramos Mejia - Infraestructura Y Seguridad</b><br/>Monto: $1284062 | Licitada a Ses S.A. (CUIT 30647727545) | Finalizada el 31/03/2017", -34.6176205106544, -58.4094003246186],
+["<b>19005 - Obras En Hospitales De Caballito: Hospital Durand - Infraestructura Y Seguridad - 2ro Etapa</b><br/>Monto: $2784361 | Licitada a Seyma Riva Saiicfa - Mantelectric Icisa Ute (CUIT 30714764892) | Finalizada el 12/06/2017", -34.6088715380348, -58.4378883759306],
+["<b>19006 - Obras En Hospitales De Caballito: Hospital Durand - Remodelacion Del Sector De Guardia</b><br/>Monto: $12815554 | Licitada a Seyma Riva Saiicfa - Mantelectric Icisa Ute (CUIT 30714764892) | Finalizada el 01/08/2017", -34.6088715380348, -58.4378883759306],
+["<b>19007 - Obras En Hospitales De Caballito: Hospital Durand - Infraestructura Y Seguridad - 1ro Etapa</b><br/>Monto: $3037690 | Licitada a Seyma Riva Saiicfa - Mantelectric Icisa Ute (CUIT 30714764892) | Finalizada el 12/06/2017", -34.6088715380348, -58.4378883759306],
+["<b>19009 - Obras En Hospitales De Flores: Hospital Pinero - Infraestructura Y Seguridad</b><br/>Monto: $1231889 | Licitada a Lesko S.A.C.I.F.I.A. (CUIT 30520282528) | Finalizada el 23/01/2017", -34.6441243289697, -58.4536745869801],
+["<b>19010 - Obras En Hospitales De La Boca: Hospital Argerich - Remodelacion Del Sector De Guardia</b><br/>Monto: $6548728 | Licitada a Sehos S.A. (CUIT 30649820704) | Finalizada el 07/03/2017", -34.6277812961499, -58.3660267152694],
+["<b>19014 - Obras En Hospitales De Parque Chas: Hospital Tornu - Remodelacion Del Sector Guardia</b><br/>Monto: $742690 | Licitada a Ses S.A. (CUIT 30647727545) | Finalizada el 01/08/2017", -34.5873074404311, -58.4708927532251],
+["<b>19015 - Obras En Hospitales De Coghlan: Hospital Pirovano - Readecuacion Local Residuos Peligrosos</b><br/>Monto: $1103965 | Licitada a Mejoramiento Hospitalario S.A. (CUIT 30707962654) | Finalizada el 11/01/2017", -34.5651057769818, -58.4709864414289],
+["<b>23009 - Barrio 31: Anexo Cedel (Oficina Afip - Agip)</b><br/>Monto: $993017 | Licitada a Merlino (CUIT 20103652775) | Finalizada el 14/04/2017", -34.5835958937482, -58.3745356226373],
+["<b>23010 - Barrio 31: Galpon</b><br/>Monto: $18884253 | Licitada a Merlino (CUIT 20103652775) | Finalizada el 01/04/2017", -34.5835958937482, -58.3745356226373],
+["<b>23011 - Barrio 31: Oficina 99</b><br/>Monto: $450000 | Licitada a Bristol (CUIT 30711320160) | Finalizada el 26/08/2017", -34.5835958937482, -58.3745356226373],
+["<b>23012 - Barrio 31: Cesac 47</b><br/>Monto: $ | Licitada a Merlino (CUIT 20103652775) | Finalizada el 01/04/2017", -34.5835958937482, -58.3745356226373],
+["<b>25006 - Caniles: Centenario - C1</b><br/>Monto: $2297470 | Licitada a Casa Machi S.A (CUIT 30608125201) | Finalizada el 10/04/2017", -34.608637383273, -58.436217194731],
+["<b>25007 - Caniles: Centenario - C2</b><br/>Monto: $2447396 | Licitada a Casa Machi S.A (CUIT 30608125201) | Finalizada el 10/04/2017", -34.608637383273, -58.436217194731],
+["<b>25008 - Caniles: Centenario - C3</b><br/>Monto: $2339767 | Licitada a Casa Machi S.A (CUIT 30608125201) | Finalizada el 04/10/2017", -34.608637383273, -58.436217194731],
+["<b>25009 - Plazas Y Parques: Reserva Ecologica. Nuevo Borde Costero: Playa</b><br/>Monto: $5434421 | Licitada a Planobra S.A - Indaltec S.A Ute (CUIT 30712230467) | Finalizada el 30/03/2017", -34.611198736898, -58.3592383994201],
+["<b>25010 - Plazas Y Parques: Reserva Ecologica. Rambla</b><br/>Monto: $3548080 | Licitada a Planobra S.A - Indaltec S.A Ute (CUIT 30712230467) | Finalizada el 30/03/2017", -34.611198736898, -58.3592383994201],
+["<b>25011 - Plazas Y Parques: 9 De Julio - Uade</b><br/>Monto: $3500000 | Licitada a Urbaser Argentina S.A - Seob S.A. U.T.E. (CUIT 30714682489) | Finalizada el 30/05/2017", -34.6164828564921, -58.3815714401814],
+["<b>25015 - Barrio 31: Feria</b><br/>Monto: $59192343 | Licitada a Pose (CUIT 30709107123) | Finalizada el 12/08/2017", -34.637369, -58.367333],
+["<b>25016 - Barrio 31: Cancha Y Plaza Vilma</b><br/>Monto: $ | Licitada a Cooperativa (CUIT ?) | Finalizada el 15/12/2017", -34.5835523801807, -58.374513873277],
+["<b>25017 - Barrio 31: Playon Oeste</b><br/>Monto: $44507177 | Licitada a C&E Construcciones S.A. (CUIT 30708288361) | Finalizada el 12/07/2017", -34.5835690042635, -58.3744825825511],
+["<b>25019 - Comisarias: Comisaria 15</b><br/>Monto: $19496209 | Licitada a Dejesus S.R.L (CUIT 30713272708) | Finalizada el 16/08/2017", -34.5946160986617, -58.3800116469415],
+["<b>25023 - Comisarias: Comisaria 43</b><br/>Monto: $12117021 | Licitada a Miavasa S.A. (CUIT 30677303863) | Finalizada el 31/12/2017", -34.6288885427203, -58.4839252816622],
+["<b>25025 - Oficinas Mjys: Hornos 238 Pisos 1, 2, 3</b><br/>Monto: $19961650 | Licitada a Bosquimano S.A (CUIT 30711470022) | Finalizada el 09/01/2017", -34.6309709037938, -58.3783609416557],
+["<b>25027 - Oficinas Mjys: Hornos 238 Pisos 4, 5, 6</b><br/>Monto: $24916149 | Licitada a Sur Construcciones (CUIT 30712521232) | Finalizada el 25/09/2017", -34.6309709037938, -58.3783609416557],
+["<b>25029 - Oficinas Mjys: Herrera - Armeria Armamentos</b><br/>Monto: $ | Licitada a Ecosan S.A (CUIT 30707696849) | Finalizada el 04/12/2017", -34.6544905373384, -58.3740850791462],
+["<b>25030 - Destacamentos De Bomberos: Bomberos - Destacamento - Velez Sarsfield (Rodo 4470)</b><br/>Monto: $3675140 | Licitada a Uniser S.A (CUIT 30710477759) | Finalizada el 21/11/2017", -34.6447251857812, -58.4877608424146],
+["<b>25034 - Destacamentos De Bomberos: Bomberos - Destacamento - Flores (Estacion) - Cuartel VII (Falcon 2255) - Etapa 2</b><br/>Monto: $6500000 | Licitada a Industrias Mas S.R.L (CUIT 30707041990) | Finalizada el 12/08/2017", -34.6293575465346, -58.4600359467517],
+["<b>25035 - Instituto Superior De Seguridad Publica: Instituto Superior De Seguridad Publica - Pileta</b><br/>Monto: $3104477 | Licitada a Dejesus S.R.L (CUIT 30713272708) | Finalizada el 30/12/2017", -34.6551806236519, -58.4650798559774],
+["<b>25037 - Plan 30 Creacion: Nueva Escuela</b><br/>Monto: $12176766 | Licitada a Kion S.A.I.C. (CUIT 33522512279) | Finalizada el 30/11/2017", -34.6861652466127, -58.4577012042349],
+["<b>25044 - Obras Generales: Esc. Primaria Comun Nro 15 Antonio Devoto</b><br/>Monto: $1373007 | Licitada a Tala Construcciones S.A. (CUIT 30708267984) | Finalizada el 24/02/2017", -34.6004842908284, -58.5139623518401],
+["<b>25045 - Obras Generales: Esc. Primaria Comun Grecia</b><br/>Monto: $8660316 | Licitada a Radiotronica Construcciones S.A. (CUIT 33709466939) | Finalizada el 20/09/2017", -34.5901182224912, -58.4951814708383],
+["<b>25046 - Obras Generales: Esc. Politecnica Manuel Belgrano</b><br/>Monto: $9226179 | Licitada a Dragonair S.A. (CUIT 30707439587) | Finalizada el 31/12/2017", -34.6118557211284, -58.3733251970144],
+["<b>25048 - Obras Generales: Esc. Pimaria Comun Nro 23 Republica De Portugal</b><br/>Monto: $4719903 | Licitada a Las Cortes S.R.L. (CUIT 30700041197) | Finalizada el 26/12/2017", -34.6868398184356, -58.4679605138143],
+["<b>25049 - Obras Generales: Esc. Primaria Comun Nro 14 Hogar Naval Stella Maris</b><br/>Monto: $2445948 | Licitada a Dilthey S.A. (CUIT 30711331847) | Finalizada el 31/12/2017", -34.6354966469137, -58.4731166769809],
+["<b>25050 - Obras Generales: Esc. Primaria Comun Nro 12 Prof. Rodolfo Senet</b><br/>Monto: $945810 | Licitada a Coypro S.A. (CUIT 30615108290) | Finalizada el 22/08/2017", -34.5544477029047, -58.4702156963528],
+["<b>25051 - Obras Generales: Esc. Primaria Comun Nro 7 Manuel J. Garcia</b><br/>Monto: $5749722 | Licitada a Di Pietro S.A (CUIT 20044899532) | Finalizada el 23/07/2017", -34.5493953202584, -58.4676440812754],
+["<b>25053 - Obras Generales: Esc. Primaria Comun Nro 22 Agronomia</b><br/>Monto: $11625617 | Licitada a Estudio Ing. Villa S.R.L (CUIT 30707977481) | Finalizada el 30/08/2017", -34.5911489748953, -58.4783062956603],
+["<b>25055 - Obras Generales: Esc. Primaria Comun Nro 7 Ninas De Ayohuma</b><br/>Monto: $630703 | Licitada a Quatrovial S.A. (CUIT 30691349264) | Finalizada el 09/01/2017", -34.6358988848162, -58.4420551222949],
+["<b>25056 - Obras Generales: Esc. Primaria Comun Nro 19 Bartolina Sisa</b><br/>Monto: $19150223 | Licitada a Ingenor S.A. (CUIT 30631453461) | Finalizada el 20/12/2017", -34.6065119882712, -58.5239265848031],
+["<b>25058 - Obras Generales: Esc. Primaria Comun Nro 12 Prof. Rodolfo Senet</b><br/>Monto: $40287468 | Licitada a Ses S.A. - Mig S.A. (CUIT 30-71226425-6) | Finalizada el 03/11/2017", -34.6514267671708, -58.3966430972825],
+["<b>25060 - Obras Generales: Esc. Primaria Comun Nro 14 Simon Bolivar</b><br/>Monto: $7168850 | Licitada a Codyar S.R.L. (CUIT 30709320889) | Finalizada el 30/11/2017", -34.6209936987722, -58.5253667491779],
+["<b>25063 - Barrio Los Piletones: Mejoras De Frentes - Barrio Los Piletones Etapa 2</b><br/>Monto: $1655046 | Licitada a Cooperativa (CUIT ?) | Finalizada el 01/10/2017", -34.664374, -58.45512],
+["<b>25075 - Entorno Microcentro: Ampliacion De Aceras En Calle Paraguay</b><br/>Monto: $17966000 | Licitada a Altote S.A. (CUIT 30707431896) | Finalizada el 01/05/2017", -34.59754019, -58.37667644],
+["<b>25076 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Provision E Instalacion De Butacas En Horquilla</b><br/>Monto: $1805153 | Licitada a Diseno Y Equipamientos S.R.L. (CUIT 30708288353) | Finalizada el 16/07/2017", -34.6980018162953, -58.4698263017463],
+["<b>25077 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Provision E Instalacion De Carteleria Publicitaria</b><br/>Monto: $1411966 | Licitada a Vizcay Alejandro Raul (CUIT 20216716486) | Finalizada el 01/09/2017", -34.6973270121075, -58.469089041491],
+["<b>25079 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Provision E Instalacion De Maceteros Frente A Platea B</b><br/>Monto: $79880 | Licitada a Mel Contrucciones S.R.L (CUIT 33714510679) | Finalizada el 21/08/2017", -34.6980018162953, -58.4698263017463],
+["<b>25080 - Autodromo Oscar Y Alfredo Galvez: Puesta En Valor Autodromo De Bs. As. Oscar Y Juan Galvez - Provision E Instalacion De Maceteros En Plaza De Honor</b><br/>Monto: $103735 | Licitada a Mel Contrucciones S.R.L (CUIT 33714510679) | Finalizada el 21/08/2017", -34.6973270121075, -58.469089041491],
+["<b>123 - Paseo De La Ribera: Etapa Ii Rocha Y Cerri</b><br/>Monto: $14534310 | Licitada a Villarex S.A. (CUIT 30712097996) | Finalizada el 15/07/2017", -34.6410510076, -58.36045056581],
+["<b>122 - Paseo De La Ribera: Etapa Ii Rocha Y Cerri</b><br/>Monto: $13906212 | Licitada a Instalectro S.A. (CUIT 33661628729) | Finalizada el 15/07/2017", -34.6417239529, -58.3586587345],
+["<b>65 - Teatro Colon: Talleres La Nube</b><br/>Monto: $4926076 | Licitada a Dal Construcciones S.A. (CUIT 30604370171) | Finalizada el 31/07/2017", -34.5828555594, -58.449991301],
+["<b>64 - Estacion De Bombeo Nº5 Del Sistema Pluvial La Boca - Barracas</b><br/>Monto: $56737649 | Licitada a SABAVISA SA -MERCO VIAL SA UTE (CUIT 30687237346) | Finalizada el 15/06/2017", -34.6373683584467, -58.3696775025414],
+["<b>69 - Teatro Colon: Instituto Superior De Arte Teatro Colon</b><br/>Monto: $15203243 | Licitada a Ingecons S.A. (CUIT 30683399333) | Finalizada el 30/05/2017", -34.604221506465, -58.3905017937086],
+["<b>101 - Pabellon De Acceso Al Parque De La Memoria</b><br/>Monto: $8825149 | Licitada a Villarex S.A. (CUIT 30712097996) | Finalizada el 30/01/2017", -34.546227, -58.431044],
+["<b>124 - Paseo De La Ribera: Etapa Iii Salvadores Y Cerri</b><br/>Monto: $11917967 | Licitada a Salvatori S.A Parques Y Jardines (CUIT 30512700124) | Finalizada el 15/07/2017", -34.6427898942, -58.3579185605],
+
+];
+
+function initGoogleMap(){
+
+  var infowindow = new google.maps.InfoWindow(); /* SINGLE */
+  var map = new google.maps.Map(document.getElementById('map-canvas'), {
+		zoom: 11.9,
+		center: new google.maps.LatLng(-34.6170083, -58.44509270000003),
+		styles: [
+  {
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.neighborhood",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "road.arterial",
+    "elementType": "labels.text",
+    "stylers": [
+      {
+        "visibility": "on"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "labels.text",
+    "stylers": [
+      {
+        "visibility": "on"
+      }
+    ]
+  },
+  {
+    "featureType": "road.local",
+    "stylers": [
+      {
+        "visibility": "on"
+      }
+    ]
+  },
+  {
+    "featureType": "road.local",
+    "elementType": "labels.text",
+    "stylers": [
+      {
+        "visibility": "on"
+      }
+    ]
+  }
+]
+	});
+  
+  var icon = { 
+    url: 'https://i.imgur.com/4gibQch.png'
+};
+
+  function placeMarker( loc ) {
+    var latLng = new google.maps.LatLng( loc[1], loc[2]);
+    var marker = new google.maps.Marker({
+      position : latLng,
+      map      : map,
+	  icon     : icon
+    });
+    google.maps.event.addListener(marker, 'click', function(){
+        infowindow.close(); // Close previously opened infowindow
+        infowindow.setContent( "<div id='infowindow'>"+ loc[0] +"</div>");
+        infowindow.open(map, marker);
+    });
+  }
+  
+  // ITERATE ALL LOCATIONS
+  // Don't create functions inside for loops
+  // therefore refer to a previously created function
+  // and pass your iterating location as argument value:
+  for(var i=0; i<locations.length; i++) {
+    placeMarker( locations[i] );
+  } 
+  
+}
+google.maps.event.addDomListener(window, 'load', initGoogleMap);
+	</script>
+	 <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAymuPXqm5PNA44ebzCBZerICSRtiV7YzU&libraries=visualization&callback=initMap">
+    </script>
+</body>
+</html>
